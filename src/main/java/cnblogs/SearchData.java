@@ -28,7 +28,8 @@ public class SearchData{
                     sql=sql+","+value;
                 }
             }
-            sql="SELECT "+sql+condition;
+            sql="SELECT "+sql+" "+condition;
+            System.out.println(sql);
            // sql="SELECT Slot,Test_Station,Test_Require,Product_Model,SN,MAC,Record_Time,PC_Name,ATE_Version,Hardware_Version,Software_Version,Software_Number,Boot_Version,TestResult FROM zzblogo.ml_switch where SN='G1MR13G00005B'";
             ResultSet data=stmt.executeQuery(sql);
             while (data.next()){
