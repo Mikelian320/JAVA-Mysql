@@ -1,4 +1,5 @@
 package cnblogs;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -96,7 +97,7 @@ public class RequestDemo extends HttpServlet {
         String searchCondition=DealString.dealCondition(DealString.condition2Json(queryString));
         response.setCharacterEncoding("UTF-8");
         response.setHeader("content-type", "text/html;charset=UTF-8");
-        JSONObject Result = new JSONObject();
+        JSONArray Result = new JSONArray();
         if (searchMode.indexOf("ProductInfo")>=0) {
             Result=SearchData.searchData(searchCondition,Key1);
         } else {

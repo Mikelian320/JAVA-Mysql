@@ -8,10 +8,10 @@ public class SearchData{
     static final String DB_URL="jdbc:mysql://10.18.255.116:3306/zzblogo";
     static final String USER="zzbl";
     static final String PASS="#Sx4BXya";
-    public static JSONObject searchData(String condition,String [] keys){
+    public static JSONArray searchData(String condition,String [] keys){
         Connection conn = null;
         Statement stmt = null;
-        JSONObject dataSet=new JSONObject();
+        JSONArray dataSet=new JSONArray();
         Integer index =0;
         //String [] keys={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
         try {
@@ -37,7 +37,7 @@ public class SearchData{
                 for (String value : keys) {
                     singleDA.add(data.getString(value));
                 }
-                dataSet.put(index.toString(),singleDA);
+                dataSet.add(singleDA);
                 index++;
             }
             data.close();
