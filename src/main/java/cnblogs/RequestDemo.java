@@ -3,7 +3,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.ObjectInputStream.GetField;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -96,7 +95,7 @@ public class RequestDemo extends HttpServlet {
         String searchMode=DealString.geturlKeyvalue("searchMode",queryString);
         String searchCondition=DealString.dealCondition(DealString.condition2Json(queryString));
         response.setCharacterEncoding("UTF-8");
-        response.setHeader("content-type", "text/html;charset=UTF-8");
+        response.setHeader("content-type", "application/json;charset=UTF-8");
         JSONArray Result = new JSONArray();
         if (searchMode.indexOf("ProductInfo")>=0) {
             Result=SearchData.searchData(searchCondition,Key1);
@@ -104,7 +103,7 @@ public class RequestDemo extends HttpServlet {
             Result=SearchData.searchData(searchCondition,Key2);
         }
         PrintWriter out = response.getWriter();
-        out.println("<h1>" + message + "</h1>");
+        //out.println("<h1>" + message + "</h1>");
         out.println(Result.toString());
     }
     

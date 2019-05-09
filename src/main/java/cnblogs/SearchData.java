@@ -4,16 +4,15 @@ import java.sql.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 public class SearchData{
-    static final String JDBC_DRIVER="com.mysql.jdbc.Driver";
-    static final String DB_URL="jdbc:mysql://10.18.255.116:3306/zzblogo";
-    static final String USER="zzbl";
-    static final String PASS="#Sx4BXya";
+    static final String JDBC_DRIVER=Account.JDBC_DRIVER;
+    static final String DB_URL=Account.DB_URL;
+    static final String USER=Account.USER;
+    static final String PASS=Account.PASS;
     public static JSONArray searchData(String condition,String [] keys){
         Connection conn = null;
         Statement stmt = null;
         JSONArray dataSet=new JSONArray();
         Integer index =0;
-        //String [] keys={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
         try {
             Class.forName(JDBC_DRIVER);
             System.out.println("connecting...");
@@ -30,7 +29,6 @@ public class SearchData{
             }
             sql="SELECT "+sql+" "+condition;
             System.out.println(sql);
-           // sql="SELECT Slot,Test_Station,Test_Require,Product_Model,SN,MAC,Record_Time,PC_Name,ATE_Version,Hardware_Version,Software_Version,Software_Number,Boot_Version,TestResult FROM zzblogo.ml_switch where SN='G1MR13G00005B'";
             ResultSet data=stmt.executeQuery(sql);
             while (data.next()){
                 JSONArray singleDA=new JSONArray();

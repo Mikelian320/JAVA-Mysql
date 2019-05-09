@@ -1,5 +1,6 @@
 target
 src/test
+src/main/java/cnblogs/Account.java
 
 # local env files
 .env.local
