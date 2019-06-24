@@ -12,7 +12,7 @@ public class SearchData{
         Connection conn = null;
         Statement stmt = null;
         JSONArray dataSet=new JSONArray();
-        Integer index =0; 
+        Integer index =0;
         try {
             Class.forName(JDBC_DRIVER);
             System.out.println("connecting...");

@@ -3,6 +3,8 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Iterator;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -38,42 +40,48 @@ class  DealString{
                     temp=temp.substring(0, temp.indexOf(","));
                 }
                 searchCon.put(var, temp);
-            } else {
-                searchCon.put(var, "");
             }
         }
         return searchCon;
     }
+    /**20190522优化：直接用for循环遍历json数据**/
     protected static String dealCondition(JSONObject searchCon){
-        String [] searchArr={"Product_Type","Test_Station","Product_Model","SN","MAC","TestResult","StartTime","EndTime"};
+     // String [] searchArr={"Product_Type","Test_Station","Product_Model","SN","MAC","TestResult","StartTime","EndTime"};
         String sqlCondition="";
-        for (String var :searchArr) {
-             switch (var) {
-                 case "Product_Type":
-                 if (searchCon.getString(var).isEmpty()) {
-                     sqlCondition="FROM zzblogo.* WHERE";
-                 } else {
-                     sqlCondition="FROM zzblogo."+searchCon.getString(var)+" WHERE";
-                 }
-                     break;
+        if (searchCon.getString("Product_Type").isEmpty()) {
+            sqlCondition="FROM zzblogo.*";
+        } else {
+            sqlCondition="FROM zzblogo."+searchCon.getString("Product_Type");
+            searchCon.remove("Product_Type");
+        }
+        Iterator iterator = searchCon.keys();
+        int i=0;
+        while(iterator.hasNext()) {
+            String key=(String) iterator.next();
+            if (i==0){
+                sqlCondition=sqlCondition +" WHERE ";
+            }else{
+                sqlCondition=sqlCondition +" AND ";
+            }
+            i++;
+             switch (key) {
                  case "StartTime":
-                 if (!searchCon.getString(var).isEmpty()) {
-                     sqlCondition=sqlCondition +" AND Record_Time>="+"'"+searchCon.getString(var)+"'";
+                 {
+                     sqlCondition=sqlCondition +"Record_Time>="+"'"+searchCon.getString(key)+"'";
                  } 
                      break;
                  case "EndTime":
-                 if (!searchCon.getString(var).isEmpty()) {
-                    sqlCondition=sqlCondition +" AND Record_Time<="+"'"+searchCon.getString(var)+"'";
-                } 
+                 {
+                    sqlCondition=sqlCondition +"Record_Time<="+"'"+searchCon.getString(key)+"'";
+                 } 
                      break;
                  default:
-                 if (!searchCon.getString(var).isEmpty()) {
-                    sqlCondition=sqlCondition +" AND "+var+"="+"'"+searchCon.getString(var)+"'";
+                {
+                    sqlCondition=sqlCondition+key+"="+"'"+searchCon.getString(key)+"'";
                 } 
                      break;
              }
         }
-        sqlCondition=sqlCondition.replace("WHERE AND", "WHERE");
         return sqlCondition;
     }
 }
@@ -81,7 +89,6 @@ public class RequestDemo extends HttpServlet {
  
     private String message;
     private String [] Key1={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
-    ;
     private String [] Key2={"Log"};
     public void init() throws ServletException
     {
@@ -118,9 +125,6 @@ public class RequestDemo extends HttpServlet {
         JSONObject searchCon=new JSONObject();
         searchCon=DealString.condition2Json(queryString);
         sqlCondition=DealString.dealCondition(searchCon);
-       // String searchMode=DealString.geturlKeyvalue("searchMode",queryString);
-        //String searchCondition=DealString.geturlKeyvalue("searchCondition",queryString);
-        //searchCondition=DealString.dealCondition(searchCondition);
         System.out.println(searchCon);
         System.out.println(sqlCondition);
         System.out.println(searchMode);
