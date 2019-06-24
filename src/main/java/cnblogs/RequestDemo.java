@@ -95,6 +95,7 @@ public class RequestDemo extends HttpServlet {
         String searchMode=DealString.geturlKeyvalue("searchMode",queryString);
         String searchCondition=DealString.dealCondition(DealString.condition2Json(queryString));
         response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/javascript");
         response.setHeader("content-type", "application/json;charset=UTF-8");
         JSONArray Result = new JSONArray();
         if (searchMode.indexOf("ProductInfo")>=0) {
