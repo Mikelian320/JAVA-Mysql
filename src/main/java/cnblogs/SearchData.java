@@ -8,7 +8,9 @@ public class SearchData{
     static final String DB_URL=Account.DB_URL;
     static final String USER=Account.USER;
     static final String PASS=Account.PASS;
-    public static JSONArray searchData(String condition,String [] keys){
+    public static JSONArray searchData(String condition,String [] keys)
+    throws Exception 
+    {
         Connection conn = null;
         Statement stmt = null;
         JSONArray dataSet=new JSONArray();
@@ -42,18 +44,19 @@ public class SearchData{
             stmt.close();
             conn.close();
         }catch (SQLException se) {
-            se.printStackTrace();
+           throw se;
         }catch(Exception e){
-            e.printStackTrace();
+            throw e;
         }finally{
             try{
                 if(stmt!=null) stmt.close();
-            }catch(SQLException se2){
+            }catch(SQLException se){
+                throw se;
             }
             try{
                 if(conn!=null) conn.close();
             }catch(SQLException se){
-                se.printStackTrace();
+                throw se;
             }
         }
         System.out.println("Goodbye!");

@@ -4,6 +4,7 @@ import net.sf.json.JSONObject;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
+import java.util.logging.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -86,10 +87,11 @@ class  DealString{
     }
 }
 public class RequestDemo extends HttpServlet {
- 
+    
     private String message;
     private String [] Key1={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
     private String [] Key2={"Log"};
+    Logger errlog=Logger.getLogger("ErrLog");
     public void init() throws ServletException
     {
         message = "Search Result";
@@ -105,33 +107,59 @@ public class RequestDemo extends HttpServlet {
         response.setContentType("text/javascript");
         response.setHeader("content-type", "application/json;charset=UTF-8");
         JSONArray Result = new JSONArray();
-        if (searchMode.indexOf("ProductInfo")>=0) {
-            Result=SearchData.searchData(searchCondition,Key1);
-        } else {
-            Result=SearchData.searchData(searchCondition,Key2);
-        }
         PrintWriter out = response.getWriter();
+        try {
+            if (searchMode.indexOf("ProductInfo")>=0) {
+                Result=SearchData.searchData(searchCondition,Key1);
+            } else {
+                Result=SearchData.searchData(searchCondition,Key2);
+            }
+            out.println(Result.toString());
+        } catch (Exception se) {
+            try {
+                out.println("Error:"+se.toString());
+                FileHandler fileHandler = new FileHandler("./Errlog.txt");
+                errlog.addHandler(fileHandler);
+                errlog.warning(se.toString());
+            } catch (Exception e) {
+                out.println("Error:"+e.toString());
+            }
+        }
         //out.println("<h1>" + message + "</h1>");
-        out.println(Result.toString());
     }
     
     public void destroy()
     {
     }
     public static void main(String[] args) {
-        String queryString="searchMode=ProductInfo&searchCondition=Product_Type=ml_switch,StartTime=2018/8/10 0:00,EndTime=2019/5/1 0:00,Test_Result=PASS,SN=G1MR13G00005B";
+        String [] Key1={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
+        String queryString="searchMode=ProductInfo&searchCondition=Product_Type=ml_switch,TestResult=PASS,SN=G1MR13G00005B";
         String sqlCondition="";
-        String searchMode=DealString.geturlKeyvalue("searchMode",queryString);
+        JSONArray Result = new JSONArray();
+        Logger errlog=Logger.getLogger("ErrLog");
+       // String searchMode=DealString.geturlKeyvalue("searchMode",queryString);
         JSONObject searchCon=new JSONObject();
         searchCon=DealString.condition2Json(queryString);
         sqlCondition=DealString.dealCondition(searchCon);
-        System.out.println(searchCon);
+        try {
+            Result=SearchData.searchData(sqlCondition,Key1);
+        } catch (Exception se) {
+            try {
+                FileHandler fileHandler = new FileHandler("Errlog.txt");
+                errlog.addHandler(fileHandler);
+                errlog.warning(se.toString());
+            } catch (Exception e) {
+                //TODO: handle exception
+            }
+        }
+        /*System.out.println(searchCon);
         System.out.println(sqlCondition);
         System.out.println(searchMode);
         if (searchMode.indexOf("ProductInfo")>=0) {
             System.out.println(0);
         } else {
             System.out.println(1);
-        }
+        }*/
+        System.out.println(Result);
     }
   }
