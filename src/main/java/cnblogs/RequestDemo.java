@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.logging.*;
-
+import java.util.logging.SimpleFormatter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -86,17 +88,37 @@ class  DealString{
         return sqlCondition;
     }
 }
+class MyLogHandler extends Formatter{
+    private static String getTime(){
+        SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        String currentTime=dateFormat.format(new Date());
+        return currentTime;
+    }
+    @Override
+    public String format(LogRecord record) { 
+        return getTime() + ":" + record.getMessage()+"\n"; 
+    } 
+}
 public class RequestDemo extends HttpServlet {
-    
-    private String message;
     private String [] Key1={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
     private String [] Key2={"Log"};
     Logger errlog=Logger.getLogger("ErrLog");
+    Logger searchrecord=Logger.getLogger("SearchRecord");
     public void init() throws ServletException
     {
-        message = "Search Result";
+        //message = "Search Result";
     }
-  
+    private void initlogHandle(){
+        try {
+            FileHandler sfHandler = new FileHandler("./SearchRecord.txt");
+            FileHandler efHandler = new FileHandler("./Errlog.txt");
+            sfHandler.setFormatter(new MyLogHandler());
+            searchrecord.addHandler(sfHandler);
+            errlog.addHandler(efHandler);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public void doGet(HttpServletRequest request,HttpServletResponse response)
     throws ServletException, IOException
     {
@@ -109,23 +131,25 @@ public class RequestDemo extends HttpServlet {
         JSONArray Result = new JSONArray();
         PrintWriter out = response.getWriter();
         try {
+            FileHandler sfHandler = new FileHandler("./SearchRecord.txt");
+            sfHandler.setFormatter(new MyLogHandler());
+            searchrecord.addHandler(sfHandler);
             if (searchMode.indexOf("ProductInfo")>=0) {
-                Result=SearchData.searchData(searchCondition,Key1);
+                Result=SearchData.searchData(searchCondition,Key1,searchrecord);
             } else {
-                Result=SearchData.searchData(searchCondition,Key2);
+                Result=SearchData.searchData(searchCondition,Key2,searchrecord);
             }
             out.println(Result.toString());
         } catch (Exception se) {
             try {
                 out.println("Error:"+se.toString());
-                FileHandler fileHandler = new FileHandler("./Errlog.txt");
-                errlog.addHandler(fileHandler);
+                FileHandler efHandler = new FileHandler("./Errlog.txt");
+                errlog.addHandler(efHandler);
                 errlog.warning(se.toString());
             } catch (Exception e) {
                 out.println("Error:"+e.toString());
             }
         }
-        //out.println("<h1>" + message + "</h1>");
     }
     
     public void destroy()
@@ -136,30 +160,18 @@ public class RequestDemo extends HttpServlet {
         String queryString="searchMode=ProductInfo&searchCondition=Product_Type=ml_switch,TestResult=PASS,SN=G1MR13G00005B";
         String sqlCondition="";
         JSONArray Result = new JSONArray();
-        Logger errlog=Logger.getLogger("ErrLog");
-       // String searchMode=DealString.geturlKeyvalue("searchMode",queryString);
+        Logger searchrecord=Logger.getLogger("SearchRecord");
         JSONObject searchCon=new JSONObject();
         searchCon=DealString.condition2Json(queryString);
         sqlCondition=DealString.dealCondition(searchCon);
         try {
-            Result=SearchData.searchData(sqlCondition,Key1);
+            FileHandler sfHandler = new FileHandler("SearchRecord.txt");
+            sfHandler.setFormatter(new MyLogHandler());
+            searchrecord.addHandler(sfHandler);
+            Result=SearchData.searchData(sqlCondition,Key1,searchrecord);
         } catch (Exception se) {
-            try {
-                FileHandler fileHandler = new FileHandler("Errlog.txt");
-                errlog.addHandler(fileHandler);
-                errlog.warning(se.toString());
-            } catch (Exception e) {
-                //TODO: handle exception
-            }
+            se.printStackTrace();
         }
-        /*System.out.println(searchCon);
-        System.out.println(sqlCondition);
-        System.out.println(searchMode);
-        if (searchMode.indexOf("ProductInfo")>=0) {
-            System.out.println(0);
-        } else {
-            System.out.println(1);
-        }*/
         System.out.println(Result);
     }
   }
