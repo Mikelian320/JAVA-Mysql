@@ -32,6 +32,7 @@ public class SearchData{
                 }
             }
             sql="SELECT "+sql+" "+condition;
+//            System.out.println(sql);
             ResultSet data=stmt.executeQuery(sql);
             log.info(sql);
             while (data.next()){

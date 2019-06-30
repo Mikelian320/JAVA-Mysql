@@ -22,7 +22,7 @@ class  DealString{
                 Keyvalue=Keyvalue.substring(1, Keyvalue.indexOf("&"));
                 return Keyvalue;
             } else {
-                return Keyvalue;
+                return Keyvalue.substring(1);
             }
         } else {
                 return null;
@@ -37,12 +37,9 @@ class  DealString{
         String [] searchArr={"Product_Type","Test_Station","Product_Model","SN","MAC","TestResult","StartTime","EndTime"};
         for (String var : searchArr) {
             if (condition.indexOf(var)>=0) {
-                String temp;
-                temp=condition.substring(condition.indexOf(var)+var.length()+1);
-                if (temp.indexOf(",")>=0) {
-                    temp=temp.substring(0, temp.indexOf(","));
-                }
-                searchCon.put(var, temp);
+                String value;
+                value=geturlKeyvalue(var, condition);
+                searchCon.put(var, value);
             }
         }
         return searchCon;
@@ -51,7 +48,7 @@ class  DealString{
     protected static String dealCondition(JSONObject searchCon){
      // String [] searchArr={"Product_Type","Test_Station","Product_Model","SN","MAC","TestResult","StartTime","EndTime"};
         String sqlCondition="";
-        if (searchCon.getString("Product_Type").isEmpty()) {
+        if (!searchCon.containsKey("Product_Type")) {
             sqlCondition="FROM zzblogo.*";
         } else {
             sqlCondition="FROM zzblogo."+searchCon.getString("Product_Type");
@@ -157,21 +154,20 @@ public class RequestDemo extends HttpServlet {
     }
     public static void main(String[] args) {
         String [] Key1={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
-        String queryString="searchMode=ProductInfo&searchCondition=Product_Type=ml_switch,TestResult=PASS,SN=G1MR13G00005B";
-        String sqlCondition="";
-        JSONArray Result = new JSONArray();
+        String queryString="searchMode=ProductInfo&TestResult=PASS&SN=G1MR13G00005B";
+        //String sqlCondition="";
         Logger searchrecord=Logger.getLogger("SearchRecord");
         JSONObject searchCon=new JSONObject();
+        JSONArray Result=new JSONArray();
         searchCon=DealString.condition2Json(queryString);
-        sqlCondition=DealString.dealCondition(searchCon);
+        String searchCondition=DealString.dealCondition(searchCon);
         try {
-            FileHandler sfHandler = new FileHandler("SearchRecord.txt");
-            sfHandler.setFormatter(new MyLogHandler());
-            searchrecord.addHandler(sfHandler);
-            Result=SearchData.searchData(sqlCondition,Key1,searchrecord);
-        } catch (Exception se) {
-            se.printStackTrace();
+            Result=SearchData.searchData(searchCondition,Key1,searchrecord);
+            System.out.println(Result);
+        } catch (Exception e) {
+            //TODO: handle exception
+            e.printStackTrace();
         }
-        System.out.println(Result);
+
     }
   }
