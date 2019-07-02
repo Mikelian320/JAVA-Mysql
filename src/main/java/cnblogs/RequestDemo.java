@@ -45,14 +45,29 @@ class  DealString{
         return searchCon;
     }
     /**20190522优化：直接用for循环遍历json数据**/
-    protected static String dealCondition(JSONObject searchCon){
-     // String [] searchArr={"Product_Type","Test_Station","Product_Model","SN","MAC","TestResult","StartTime","EndTime"};
+    protected static String dealCondition(JSONObject searchCon,String [] Key){
         String sqlCondition="";
-        if (!searchCon.containsKey("Product_Type")) {
-            sqlCondition="FROM zzblogo.*";
-        } else {
-            sqlCondition="FROM zzblogo."+searchCon.getString("Product_Type");
+        String select="SELECT ";
+        String result="";
+        boolean hasTable=searchCon.containsKey("Product_Type");
+        final String gettablesSQL="select table_name from information_schema.tables where table_schema='zzblogo'";
+        JSONArray tables=new JSONArray();
+        for (int i=0;i<Key.length;i++) {
+            if (i<(Key.length-1)) {
+                select+=Key[i]+",";
+            } else {
+                select+=Key[i];
+            }
+        }
+        if (hasTable) {
+            result=select+" From "+searchCon.getString("Product_Type");
             searchCon.remove("Product_Type");
+        }else{
+            try {
+                tables=SearchData.searchData(gettablesSQL);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         Iterator iterator = searchCon.keys();
         int i=0;
@@ -82,7 +97,20 @@ class  DealString{
                      break;
              }
         }
-        return sqlCondition;
+        if (hasTable) {
+            result+=sqlCondition;
+        } else {
+            int size=tables.size();
+            for (int j=0;j<size;j++) {
+                if (j<size-1) {
+                    result+=select+" From "+tables.element(j).element(0)+sqlCondition+" Union ";
+                } else {
+                    result+=select+" From "+tables.element(j).element(0)+sqlCondition;
+                }
+
+            }
+        }
+        return result;
     }
 }
 class MyLogHandler extends Formatter{
@@ -121,7 +149,12 @@ public class RequestDemo extends HttpServlet {
     {
         String queryString=request.getQueryString();
         String searchMode=DealString.geturlKeyvalue("searchMode",queryString);
-        String searchCondition=DealString.dealCondition(DealString.condition2Json(queryString));
+        String searchSQL="";
+        if (searchMode.indexOf("ProductInfo")>=0) {
+            searchSQL =DealString.dealCondition(DealString.condition2Json(queryString),Key1);
+        } else {
+            searchSQL =DealString.dealCondition(DealString.condition2Json(queryString),Key2);
+        }  
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/javascript");
         response.setHeader("content-type", "application/json;charset=UTF-8");
@@ -131,11 +164,8 @@ public class RequestDemo extends HttpServlet {
             FileHandler sfHandler = new FileHandler("./SearchRecord.txt");
             sfHandler.setFormatter(new MyLogHandler());
             searchrecord.addHandler(sfHandler);
-            if (searchMode.indexOf("ProductInfo")>=0) {
-                Result=SearchData.searchData(searchCondition,Key1,searchrecord);
-            } else {
-                Result=SearchData.searchData(searchCondition,Key2,searchrecord);
-            }
+            Result=SearchData.searchData(searchSQL);
+            searchrecord.info(searchSQL);
             out.println(Result.toString());
         } catch (Exception se) {
             try {
@@ -154,16 +184,17 @@ public class RequestDemo extends HttpServlet {
     }
     public static void main(String[] args) {
         String [] Key1={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
-        String queryString="searchMode=ProductInfo&TestResult=PASS&SN=G1MR13G00005B";
+        String queryString="searchMode=ProductInfo&Product_Type=ml_switch&TestResult=PASS&SN=G1MR13G00005B";
         //String sqlCondition="";
-        Logger searchrecord=Logger.getLogger("SearchRecord");
+       // Logger searchrecord=Logger.getLogger("SearchRecord");
         JSONObject searchCon=new JSONObject();
         JSONArray Result=new JSONArray();
         searchCon=DealString.condition2Json(queryString);
-        String searchCondition=DealString.dealCondition(searchCon);
+        String searchCondition=DealString.dealCondition(searchCon,Key1);
         try {
-            Result=SearchData.searchData(searchCondition,Key1,searchrecord);
-            System.out.println(Result);
+           // Result=SearchData.searchData(searchCondition);
+           // System.out.println(Result);
+           System.out.println(searchCondition);
         } catch (Exception e) {
             //TODO: handle exception
             e.printStackTrace();
