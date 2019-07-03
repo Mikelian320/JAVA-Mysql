@@ -4,6 +4,7 @@ import net.sf.json.JSONObject;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.logging.*;
 import java.util.logging.SimpleFormatter;
 import java.text.SimpleDateFormat;
@@ -44,11 +45,18 @@ class  DealString{
         }
         return searchCon;
     }
+    protected static String timeStamp2Date(String timestampString){
+        String formats="yyyy-MM-dd HH:mm:ss";
+        Long timestamp=Long.parseLong(timestampString);
+        String date=new SimpleDateFormat(formats, Locale.CHINA).format(new Date(timestamp));
+        return date;
+    }
     /**20190522优化：直接用for循环遍历json数据**/
     protected static String dealCondition(JSONObject searchCon,String [] Key){
         String sqlCondition="";
         String select="SELECT ";
         String result="";
+        String time="";
         boolean hasTable=searchCon.containsKey("Product_Type");
         final String gettablesSQL="select table_name from information_schema.tables where table_schema='zzblogo'";
         JSONArray tables=new JSONArray();
@@ -82,12 +90,14 @@ class  DealString{
              switch (key) {
                  case "StartTime":
                  {
-                     sqlCondition=sqlCondition +"Record_Time>="+"'"+searchCon.getString(key)+"'";
+                     time=timeStamp2Date(searchCon.getString(key));
+                     sqlCondition=sqlCondition +"Record_Time>="+"'"+time+"'";
                  } 
                      break;
                  case "EndTime":
                  {
-                    sqlCondition=sqlCondition +"Record_Time<="+"'"+searchCon.getString(key)+"'";
+                    time=timeStamp2Date(searchCon.getString(key));
+                    sqlCondition=sqlCondition +"Record_Time<="+"'"+time+"'";
                  } 
                      break;
                  default:
@@ -155,9 +165,11 @@ public class RequestDemo extends HttpServlet {
             searchrecord.addHandler(sfHandler);
             Result=SearchData.searchData(searchSQL);
             searchrecord.info(searchSQL);
+            response.setStatus(200);
             out.println(Result.toString());
         } catch (Exception se) {
             try {
+                response.setStatus(500);
                 out.println("Error:"+se.toString());
                 FileHandler efHandler = new FileHandler("./Errlog.txt");
                 errlog.addHandler(efHandler);
@@ -172,22 +184,28 @@ public class RequestDemo extends HttpServlet {
     {
     }
     public static void main(String[] args) {
+     //   String a=DealString.timeStamp2Date("1500083200000");
+     //   System.out.println(a);
         String [] Key1={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
-        String queryString="searchMode=ProductInfo&Product_Type=ml_switch&SN=G1MR13G00005B";
+        String queryString="searchMode=ProductInfo&Product_Type=ml_switch&SN=G1MR13G00005B&StartTime=1500083200000&EndTime=1517204525000";
         //String sqlCondition="";
-       // Logger searchrecord=Logger.getLogger("SearchRecord");
+        Logger searchrecord=Logger.getLogger("SearchRecord");
         JSONObject searchCon=new JSONObject();
         JSONArray Result=new JSONArray();
         try {
+           FileHandler sfHandler = new FileHandler("./SearchRecord.txt");
+           sfHandler.setFormatter(new MyLogHandler());
+           
+           searchrecord.addHandler(sfHandler);
            searchCon=DealString.condition2Json(queryString);
            String searchCondition=DealString.dealCondition(searchCon,Key1);
            Result=SearchData.searchData(searchCondition);
+           searchrecord.info(searchCondition);
            System.out.println(Result);
            //System.out.println(searchCondition);
         } catch (Exception e) {
             //TODO: handle exception
             e.printStackTrace();
         }
-
     }
   }
