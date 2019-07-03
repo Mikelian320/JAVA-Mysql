@@ -103,9 +103,9 @@ class  DealString{
             int size=tables.size();
             for (int j=0;j<size;j++) {
                 if (j<size-1) {
-                    result+=select+" From "+tables.element(j).element(0)+sqlCondition+" Union ";
+                    result+=select+" From "+tables.getJSONArray(j).getString(0)+sqlCondition+" Union ";
                 } else {
-                    result+=select+" From "+tables.element(j).element(0)+sqlCondition;
+                    result+=select+" From "+tables.getJSONArray(j).getString(0)+sqlCondition;
                 }
 
             }
@@ -132,17 +132,6 @@ public class RequestDemo extends HttpServlet {
     public void init() throws ServletException
     {
         //message = "Search Result";
-    }
-    private void initlogHandle(){
-        try {
-            FileHandler sfHandler = new FileHandler("./SearchRecord.txt");
-            FileHandler efHandler = new FileHandler("./Errlog.txt");
-            sfHandler.setFormatter(new MyLogHandler());
-            searchrecord.addHandler(sfHandler);
-            errlog.addHandler(efHandler);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
     public void doGet(HttpServletRequest request,HttpServletResponse response)
     throws ServletException, IOException
@@ -184,17 +173,17 @@ public class RequestDemo extends HttpServlet {
     }
     public static void main(String[] args) {
         String [] Key1={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
-        String queryString="searchMode=ProductInfo&Product_Type=ml_switch&TestResult=PASS&SN=G1MR13G00005B";
+        String queryString="searchMode=ProductInfo&Product_Type=ml_switch&SN=G1MR13G00005B";
         //String sqlCondition="";
        // Logger searchrecord=Logger.getLogger("SearchRecord");
         JSONObject searchCon=new JSONObject();
         JSONArray Result=new JSONArray();
-        searchCon=DealString.condition2Json(queryString);
-        String searchCondition=DealString.dealCondition(searchCon,Key1);
         try {
-           // Result=SearchData.searchData(searchCondition);
-           // System.out.println(Result);
-           System.out.println(searchCondition);
+           searchCon=DealString.condition2Json(queryString);
+           String searchCondition=DealString.dealCondition(searchCon,Key1);
+           Result=SearchData.searchData(searchCondition);
+           System.out.println(Result);
+           //System.out.println(searchCondition);
         } catch (Exception e) {
             //TODO: handle exception
             e.printStackTrace();

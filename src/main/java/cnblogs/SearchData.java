@@ -21,7 +21,7 @@ public class SearchData{
             int columnCount= data.getMetaData().getColumnCount();
             while (data.next()){
                 JSONArray singleDA=new JSONArray();
-                for (int i=0;i<columnCount;i++) {
+                for (int i=1;i<=columnCount;i++) {
                     singleDA.add(data.getString(i));
                 }
                 dataSet.add(singleDA);
