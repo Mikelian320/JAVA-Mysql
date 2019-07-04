@@ -131,7 +131,7 @@ class MyLogHandler extends Formatter{
     }
     @Override
     public String format(LogRecord record) { 
-        return getTime() + ":" + record.getMessage()+"\n"; 
+        return getTime() + ":" + record.getMessage()+"\r\n"; 
     } 
 }
 public class RequestDemo extends HttpServlet {
@@ -160,20 +160,22 @@ public class RequestDemo extends HttpServlet {
         JSONArray Result = new JSONArray();
         PrintWriter out = response.getWriter();
         try {
-            FileHandler sfHandler = new FileHandler("./SearchRecord.txt");
+            FileHandler sfHandler = new FileHandler("./SearchRecord%g.txt",100000,5,true);
             sfHandler.setFormatter(new MyLogHandler());
             searchrecord.addHandler(sfHandler);
             Result=SearchData.searchData(searchSQL);
             searchrecord.info(searchSQL);
+            sfHandler.close();//增加文件句柄关闭操作，规避在LINUX系统下产生.lck文件
             response.setStatus(200);
             out.println(Result.toString());
         } catch (Exception se) {
             try {
                 response.setStatus(500);
                 out.println("Error:"+se.toString());
-                FileHandler efHandler = new FileHandler("./Errlog.txt");
+                FileHandler efHandler = new FileHandler("./Errlog%g.txt",100000,5,true);
                 errlog.addHandler(efHandler);
                 errlog.warning(se.toString());
+                efHandler.close();//增加文件句柄关闭操作，规避在LINUX系统下产生.lck文件
             } catch (Exception e) {
                 out.println("Error:"+e.toString());
             }
@@ -193,9 +195,9 @@ public class RequestDemo extends HttpServlet {
         JSONObject searchCon=new JSONObject();
         JSONArray Result=new JSONArray();
         try {
-           FileHandler sfHandler = new FileHandler("./SearchRecord.txt");
-           sfHandler.setFormatter(new MyLogHandler());
-           
+          // FileHandler sfHandler = new FileHandler("./SearchRecord.txt");
+           FileHandler sfHandler = new FileHandler("./SearchRecord%g.txt",100000,5,true);
+           sfHandler.setFormatter(new MyLogHandler());       
            searchrecord.addHandler(sfHandler);
            searchCon=DealString.condition2Json(queryString);
            String searchCondition=DealString.dealCondition(searchCon,Key1);
