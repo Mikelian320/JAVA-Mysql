@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.logging.*;
 import java.util.logging.SimpleFormatter;
+import java.util.regex.Pattern;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.servlet.ServletException;
@@ -35,7 +36,7 @@ class  DealString{
     */
     protected static JSONObject condition2Json(String condition){
         JSONObject searchCon=new JSONObject();
-        String [] searchArr={"Product_Type","Test_Station","Product_Model","SN","MAC","TestResult","StartTime","EndTime"};
+        String [] searchArr={"Product_Type","Test_Station","Product_Model","SN","MAC","TestResult","StartTime","EndTime","Offset","Limit"};
         for (String var : searchArr) {
             if (condition.indexOf(var)>=0) {
                 String value;
@@ -51,12 +52,18 @@ class  DealString{
         String date=new SimpleDateFormat(formats, Locale.CHINA).format(new Date(timestamp));
         return date;
     }
+    protected static boolean isInteger(String str){
+        Pattern pattern = Pattern.compile("[0-9]*");
+        return pattern.matcher(str).matches();
+    }
     /**20190522优化：直接用for循环遍历json数据**/
     protected static String dealCondition(JSONObject searchCon,String [] Key){
         String sqlCondition="";
         String select="SELECT ";
         String result="";
         String time="";
+        String offset="";
+        String limit="";
         boolean hasTable=searchCon.containsKey("Product_Type");
         final String gettablesSQL="select table_name from information_schema.tables where table_schema='zzblogo'";
         JSONArray tables=new JSONArray();
@@ -84,7 +91,9 @@ class  DealString{
             if (i==0){
                 sqlCondition=sqlCondition +" WHERE ";
             }else{
+                if (key!="Offset"&&key!="Limit") {
                 sqlCondition=sqlCondition +" AND ";
+                }
             }
             i++;
              switch (key) {
@@ -102,7 +111,9 @@ class  DealString{
                      break;
                  default:
                 {
-                    sqlCondition=sqlCondition+key+"="+"'"+searchCon.getString(key)+"'";
+                    if (key!="Offset"&&key!="Limit") {
+                        sqlCondition=sqlCondition+key+"="+"'"+searchCon.getString(key)+"'";
+                    }
                 } 
                      break;
              }
@@ -118,6 +129,26 @@ class  DealString{
                     result+=select+" From "+tables.getJSONArray(j).getString(0)+sqlCondition;
                 }
 
+            }
+        }
+        if (searchCon.containsKey("Offset")&&searchCon.containsKey("Limit")) {
+            offset=searchCon.getString("Offset");
+            limit=searchCon.getString("Limit");
+            if (isInteger(offset)&&isInteger(limit)) {
+                result=result+" limit "+offset+","+limit;
+            }
+        } else {
+            if (searchCon.containsKey("Offset")) {
+                offset=searchCon.getString("Offset");
+                if (isInteger(offset)) {
+                    result=result+" limit "+offset;
+                }
+            } 
+            if (searchCon.containsKey("Limit")) {
+                limit=searchCon.getString("Limit");
+                if (isInteger(limit)) {
+                    result=result+" limit "+limit;
+                }
             }
         }
         return result;
@@ -172,7 +203,7 @@ public class RequestDemo extends HttpServlet {
             try {
                 response.setStatus(500);
                 out.println("Error:"+se.toString());
-                FileHandler efHandler = new FileHandler("./Errlog%g.txt",100000,5,true);
+                FileHandler efHandler = new FileHandler("./Errlog%g.txt",100000,5,true);//句柄初始化，入参：路径、日志大小上限（Byte）、日志保存数量、追加写入
                 errlog.addHandler(efHandler);
                 errlog.warning(se.toString());
                 efHandler.close();//增加文件句柄关闭操作，规避在LINUX系统下产生.lck文件
@@ -189,7 +220,7 @@ public class RequestDemo extends HttpServlet {
      //   String a=DealString.timeStamp2Date("1500083200000");
      //   System.out.println(a);
         String [] Key1={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
-        String queryString="searchMode=ProductInfo&Product_Type=ml_switch&SN=G1MR13G00005B&StartTime=1500083200000&EndTime=1517204525000";
+        String queryString="searchMode=ProductInfo&Product_Type=ml_switch&SN=G1MR13G00005B&Offset=0&Limit=10";
         //String sqlCondition="";
         Logger searchrecord=Logger.getLogger("SearchRecord");
         JSONObject searchCon=new JSONObject();
