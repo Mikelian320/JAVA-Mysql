@@ -56,16 +56,53 @@ class  DealString{
         Pattern pattern = Pattern.compile("[0-9]*");
         return pattern.matcher(str).matches();
     }
+    protected static JSONArray getTables(){
+        JSONArray tables=new JSONArray();
+        final String gettablesSQL="select table_name from information_schema.tables where table_schema='zzblogo'";
+        try {
+            tables=SearchData.searchData(gettablesSQL);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return tables;
+    }
+    protected static String limit(JSONObject searchCon){
+        String offset="";
+        String limit="";
+        String result="";
+        if (searchCon.containsKey("Offset")&&searchCon.containsKey("Limit")) {
+            offset=searchCon.getString("Offset");
+            limit=searchCon.getString("Limit");
+            if (isInteger(offset)&&isInteger(limit)) {
+                result="limit "+offset+","+limit;
+            }
+        } else {
+            if (searchCon.containsKey("Offset")) {
+                offset=searchCon.getString("Offset");
+                if (isInteger(offset)) {
+                    result="limit "+offset;
+                }
+            }else{
+                if (searchCon.containsKey("Limit")) {
+                    limit=searchCon.getString("Limit");
+                    if (isInteger(limit)) {
+                        result="limit "+limit;
+                    }
+                }else{
+                    result="limit 1000";
+                }
+            }
+        }
+        return result;
+    }
     /**20190522优化：直接用for循环遍历json数据**/
     protected static String dealCondition(JSONObject searchCon,String [] Key){
         String sqlCondition="";
         String select="SELECT ";
         String result="";
         String time="";
-        String offset="";
         String limit="";
         boolean hasTable=searchCon.containsKey("Product_Type");
-        final String gettablesSQL="select table_name from information_schema.tables where table_schema='zzblogo'";
         JSONArray tables=new JSONArray();
         for (int i=0;i<Key.length;i++) {
             if (i<(Key.length-1)) {
@@ -78,22 +115,23 @@ class  DealString{
             result=select+" From "+searchCon.getString("Product_Type");
             searchCon.remove("Product_Type");
         }else{
-            try {
-                tables=SearchData.searchData(gettablesSQL);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            tables=getTables();
+        }
+        limit=limit(searchCon);
+        if (searchCon.containsKey("Offset")) {
+            searchCon.remove("Offset");
+        }
+        if (searchCon.containsKey("Limit")) {
+            searchCon.remove("Limit");
         }
         Iterator iterator = searchCon.keys();
         int i=0;
         while(iterator.hasNext()) {
             String key=(String) iterator.next();
             if (i==0){
-                sqlCondition=sqlCondition +" WHERE ";
+                sqlCondition=sqlCondition +" WHERE ";//如果只有Offset和Limit则不能够+ WHERE
             }else{
-                if (key!="Offset"&&key!="Limit") {
                 sqlCondition=sqlCondition +" AND ";
-                }
             }
             i++;
              switch (key) {
@@ -111,9 +149,7 @@ class  DealString{
                      break;
                  default:
                 {
-                    if (key!="Offset"&&key!="Limit") {
-                        sqlCondition=sqlCondition+key+"="+"'"+searchCon.getString(key)+"'";
-                    }
+                    sqlCondition=sqlCondition+key+"="+"'"+searchCon.getString(key)+"'";
                 } 
                      break;
              }
@@ -131,26 +167,7 @@ class  DealString{
 
             }
         }
-        if (searchCon.containsKey("Offset")&&searchCon.containsKey("Limit")) {
-            offset=searchCon.getString("Offset");
-            limit=searchCon.getString("Limit");
-            if (isInteger(offset)&&isInteger(limit)) {
-                result=result+" limit "+offset+","+limit;
-            }
-        } else {
-            if (searchCon.containsKey("Offset")) {
-                offset=searchCon.getString("Offset");
-                if (isInteger(offset)) {
-                    result=result+" limit "+offset;
-                }
-            } 
-            if (searchCon.containsKey("Limit")) {
-                limit=searchCon.getString("Limit");
-                if (isInteger(limit)) {
-                    result=result+" limit "+limit;
-                }
-            }
-        }
+        result=result+" "+limit;
         return result;
     }
 }
@@ -168,8 +185,8 @@ class MyLogHandler extends Formatter{
 public class RequestDemo extends HttpServlet {
     private String [] Key1={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
     private String [] Key2={"Log"};
-    Logger errlog=Logger.getLogger("ErrLog");
     Logger searchrecord=Logger.getLogger("SearchRecord");
+    Logger errlog=Logger.getLogger("ErrLog");
     public void init() throws ServletException
     {
         //message = "Search Result";
@@ -191,22 +208,22 @@ public class RequestDemo extends HttpServlet {
         JSONArray Result = new JSONArray();
         PrintWriter out = response.getWriter();
         try {
-            FileHandler sfHandler = new FileHandler("./SearchRecord%g.txt",100000,5,true);
+            FileHandler sfHandler = new FileHandler("./SearchRecord%g.txt",100000,5,true); 
             sfHandler.setFormatter(new MyLogHandler());
             searchrecord.addHandler(sfHandler);
+            searchrecord.info(searchSQL);//先记录查询语句，后查询，避免出错没有记录查询语句
+            sfHandler.close();
             Result=SearchData.searchData(searchSQL);
-            searchrecord.info(searchSQL);
-            sfHandler.close();//增加文件句柄关闭操作，规避在LINUX系统下产生.lck文件
             response.setStatus(200);
             out.println(Result.toString());
         } catch (Exception se) {
             try {
                 response.setStatus(500);
                 out.println("Error:"+se.toString());
-                FileHandler efHandler = new FileHandler("./Errlog%g.txt",100000,5,true);//句柄初始化，入参：路径、日志大小上限（Byte）、日志保存数量、追加写入
+                FileHandler efHandler = new FileHandler("./Errlog%g.txt",100000,5,true);//句柄初始化，入参：路径、日志大小上限（Byte）、日志保存数量、追加写入 
                 errlog.addHandler(efHandler);
                 errlog.warning(se.toString());
-                efHandler.close();//增加文件句柄关闭操作，规避在LINUX系统下产生.lck文件
+                efHandler.close();
             } catch (Exception e) {
                 out.println("Error:"+e.toString());
             }
@@ -217,11 +234,8 @@ public class RequestDemo extends HttpServlet {
     {
     }
     public static void main(String[] args) {
-     //   String a=DealString.timeStamp2Date("1500083200000");
-     //   System.out.println(a);
         String [] Key1={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
-        String queryString="searchMode=ProductInfo&Product_Type=ml_switch&SN=G1MR13G00005B&Offset=0&Limit=10";
-        //String sqlCondition="";
+        String queryString="http://www.greatwebtech.cn/search/searchdata?searchMode=ProductInfo&Offset=10&Limit=10&MAC=111111111111";
         Logger searchrecord=Logger.getLogger("SearchRecord");
         JSONObject searchCon=new JSONObject();
         JSONArray Result=new JSONArray();
@@ -232,8 +246,8 @@ public class RequestDemo extends HttpServlet {
            searchrecord.addHandler(sfHandler);
            searchCon=DealString.condition2Json(queryString);
            String searchCondition=DealString.dealCondition(searchCon,Key1);
-           Result=SearchData.searchData(searchCondition);
            searchrecord.info(searchCondition);
+           Result=SearchData.searchData(searchCondition);
            System.out.println(Result);
            //System.out.println(searchCondition);
         } catch (Exception e) {
