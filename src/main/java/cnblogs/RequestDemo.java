@@ -36,7 +36,7 @@ class  DealString{
     */
     protected static JSONObject condition2Json(String condition){
         JSONObject searchCon=new JSONObject();
-        String [] searchArr={"Product_Type","Test_Station","Product_Model","SN","MAC","TestResult","StartTime","EndTime","Offset","Limit"};
+        String [] searchArr={"Product_Type","Test_Station","Product_Model","SN","MAC","TestResult","StartTime","EndTime","Record_Time","Offset","Limit"};
         for (String var : searchArr) {
             if (condition.indexOf(var)>=0) {
                 String value;
@@ -147,6 +147,12 @@ class  DealString{
                     sqlCondition=sqlCondition +"Record_Time<="+"'"+time+"'";
                  } 
                      break;
+                 case "Record_Time":
+                 {
+                    time=timeStamp2Date(searchCon.getString(key));
+                    sqlCondition=sqlCondition +"Record_Time="+"'"+time+"'";
+                 }
+                    break;
                  default:
                 {
                     sqlCondition=sqlCondition+key+"="+"'"+searchCon.getString(key)+"'";
@@ -197,10 +203,11 @@ public class RequestDemo extends HttpServlet {
         String queryString=request.getQueryString();
         String searchMode=DealString.geturlKeyvalue("searchMode",queryString);
         String searchSQL="";
-        if (searchMode.indexOf("ProductInfo")>=0) {
-            searchSQL =DealString.dealCondition(DealString.condition2Json(queryString),Key1);
-        } else {
+        System.out.println(searchMode);
+        if (searchMode.indexOf("Log")>=0) {
             searchSQL =DealString.dealCondition(DealString.condition2Json(queryString),Key2);
+        } else {
+            searchSQL =DealString.dealCondition(DealString.condition2Json(queryString),Key1);
         }  
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/javascript");
@@ -235,7 +242,8 @@ public class RequestDemo extends HttpServlet {
     }
     public static void main(String[] args) {
         String [] Key1={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
-        String queryString="http://www.greatwebtech.cn/search/searchdata?searchMode=ProductInfo&Offset=10&Limit=10&MAC=111111111111";
+        String [] Key2={"Log"};
+        String queryString="http://www.greatwebtech.cn/search/searchdata?searchMode=Log&Slot=Chassis&PC_Name=BFEBFBFF000306C3&Record_Time=1539688983000&MAC=111111111111&SN=1234567890123";
         Logger searchrecord=Logger.getLogger("SearchRecord");
         JSONObject searchCon=new JSONObject();
         JSONArray Result=new JSONArray();
@@ -245,7 +253,7 @@ public class RequestDemo extends HttpServlet {
            sfHandler.setFormatter(new MyLogHandler());       
            searchrecord.addHandler(sfHandler);
            searchCon=DealString.condition2Json(queryString);
-           String searchCondition=DealString.dealCondition(searchCon,Key1);
+           String searchCondition=DealString.dealCondition(searchCon,Key2);
            searchrecord.info(searchCondition);
            Result=SearchData.searchData(searchCondition);
            System.out.println(Result);
