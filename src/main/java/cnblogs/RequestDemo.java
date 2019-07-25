@@ -3,6 +3,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.logging.*;
@@ -95,6 +96,19 @@ class  DealString{
         }
         return result;
     }
+    protected static String getURLDecode(String str){
+        String result="";
+        if(str==null){
+            return result;
+        }
+        try {
+            result=URLDecoder.decode(str,"UTF-8");
+        } catch(Exception e) {
+            e.printStackTrace();
+            //TODO: handle exception
+        }
+        return result;
+    }
     /**20190522优化：直接用for循环遍历json数据**/
     protected static String dealCondition(JSONObject searchCon,String [] Key){
         String sqlCondition="";
@@ -102,6 +116,7 @@ class  DealString{
         String result="";
         String time="";
         String limit="";
+        String teststation="";
         boolean hasTable=searchCon.containsKey("Product_Type");
         JSONArray tables=new JSONArray();
         for (int i=0;i<Key.length;i++) {
@@ -147,6 +162,12 @@ class  DealString{
                     sqlCondition=sqlCondition +"Record_Time<="+"'"+time+"'";
                  } 
                      break;
+                 case "Test_Station":
+                 {
+                    teststation=searchCon.getString(key);
+                    sqlCondition=sqlCondition +"Test_Station="+"'"+DealString.getURLDecode(teststation)+"'";
+                 }
+                    break;
                  case "Record_Time":
                  {
                     time=timeStamp2Date(searchCon.getString(key));
@@ -243,7 +264,7 @@ public class RequestDemo extends HttpServlet {
     public static void main(String[] args) {
         String [] Key1={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
         String [] Key2={"Log"};
-        String queryString="http://www.greatwebtech.cn/search/searchdata?searchMode=Log&Slot=Chassis&PC_Name=BFEBFBFF000306C3&Record_Time=1539688983000&MAC=111111111111&SN=1234567890123";
+        String queryString="http://www.greatwebtech.cn/search/searchdata?searchMode=ProductInfo&Limit=10&Test_Station=%E6%80%BB%E6%A3%80";
         Logger searchrecord=Logger.getLogger("SearchRecord");
         JSONObject searchCon=new JSONObject();
         JSONArray Result=new JSONArray();
@@ -253,7 +274,7 @@ public class RequestDemo extends HttpServlet {
            sfHandler.setFormatter(new MyLogHandler());       
            searchrecord.addHandler(sfHandler);
            searchCon=DealString.condition2Json(queryString);
-           String searchCondition=DealString.dealCondition(searchCon,Key2);
+           String searchCondition=DealString.dealCondition(searchCon,Key1);
            searchrecord.info(searchCondition);
            Result=SearchData.searchData(searchCondition);
            System.out.println(Result);
