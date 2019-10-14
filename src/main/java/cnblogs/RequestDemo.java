@@ -19,6 +19,9 @@ class  DealString{
     protected static String geturlKeyvalue(String key,String url){
         String Keyvalue;
         int len =key.length();
+        if (key.equals("MAC")) {
+            url=url.replace("SETMAC","");//排除SETMAC干扰
+        }
         if (url.indexOf(key)>=0) {
             Keyvalue=url.substring(url.indexOf(key)+len);
             if (Keyvalue.indexOf("&")>=0) {
@@ -37,7 +40,7 @@ class  DealString{
     */
     protected static JSONObject condition2Json(String condition){
         JSONObject searchCon=new JSONObject();
-        String [] searchArr={"Product_Type","Test_Station","Product_Model","SN","MAC","TestResult","StartTime","EndTime","Record_Time","Offset","Limit"};
+        String [] searchArr={"Slot","Product_Type","Test_Station","Product_Model","SN","MAC","PC_Name","TestResult","StartTime","EndTime","Record_Time","Offset","Limit"};
         for (String var : searchArr) {
             if (condition.indexOf(var)>=0) {
                 String value;
@@ -195,6 +198,7 @@ class  DealString{
             }
         }
         result=result+" "+limit;
+        result=result.replace("+", " ");
         return result;
     }
 }
@@ -264,12 +268,14 @@ public class RequestDemo extends HttpServlet {
     public static void main(String[] args) {
         String [] Key1={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
         String [] Key2={"Log"};
-        String queryString="http://www.greatwebtech.cn/search/searchdata?searchMode=ProductInfo&Limit=10&Test_Station=%E6%80%BB%E6%A3%80";
+        String queryString="http://www.greatwebtech.cn/search/searchdata?searchMode=ProductInfo&Test_Station=SETMAC&Limit=10";
         Logger searchrecord=Logger.getLogger("SearchRecord");
         JSONObject searchCon=new JSONObject();
         JSONArray Result=new JSONArray();
         try {
           // FileHandler sfHandler = new FileHandler("./SearchRecord.txt");
+          //String a=DealString.geturlKeyvalue("Test_Station", queryString);
+         // System.out.println(a);
            FileHandler sfHandler = new FileHandler("./SearchRecord%g.txt",100000,5,true);
            sfHandler.setFormatter(new MyLogHandler());       
            searchrecord.addHandler(sfHandler);
