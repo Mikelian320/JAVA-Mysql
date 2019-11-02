@@ -1,11 +1,14 @@
 package cnblogs;
+import java.io.FileInputStream;
 import java.sql.*;
+import java.util.Properties;
 import net.sf.json.JSONArray;
+
 public class SearchData{
-    static final String JDBC_DRIVER=Account.JDBC_DRIVER;
-    static final String DB_URL=Account.DB_URL;
-    static final String USER=Account.USER;
-    static final String PASS=Account.PASS;
+    static String JDBC_DRIVER;
+    static String DB_URL;
+    static String USER;
+    static String PASS;
     public static JSONArray searchData(String sql)
     throws Exception 
     {
@@ -14,6 +17,12 @@ public class SearchData{
         JSONArray dataSet=new JSONArray();
         Integer index =0;
         try {
+            Properties properties =new Properties();
+            properties.load(new FileInputStream(System.getProperty("user.dir")+"/jdbc.properties"));
+            JDBC_DRIVER=properties.getProperty("Driver");
+            DB_URL=properties.getProperty("Url");
+            USER=properties.getProperty("User");
+            PASS=properties.getProperty("Password");
             Class.forName(JDBC_DRIVER);
             conn = DriverManager.getConnection(DB_URL,USER,PASS);
             stmt = conn.createStatement();

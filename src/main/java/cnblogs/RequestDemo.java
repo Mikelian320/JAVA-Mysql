@@ -10,11 +10,14 @@ import java.util.logging.*;
 import java.util.logging.SimpleFormatter;
 import java.util.regex.Pattern;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Properties;
+import java.io.FileInputStream;
 class  DealString{
     protected static String geturlKeyvalue(String key,String url){
         String Keyvalue;
@@ -61,14 +64,22 @@ class  DealString{
         return pattern.matcher(str).matches();
     }
     protected static JSONArray getTables(){
-        JSONArray tables=new JSONArray();
-        final String gettablesSQL="select table_name from information_schema.tables where table_schema='zzblogo'";
-        try {
-            tables=SearchData.searchData(gettablesSQL);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return tables;
+    	try 
+    	{
+            JSONArray tables=new JSONArray();
+            Properties properties =new Properties();
+            properties.load(new FileInputStream(System.getProperty("user.dir")+"/jdbc.properties"));
+            String tableStr=properties.getProperty("Tables");
+            String [] tableArray=tableStr.split(",");
+            for (String tb : tableArray) {
+                tables.add(tb);
+            }
+            return tables;
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		return null;
+    	}
+
     }
     protected static String limit(JSONObject searchCon){
         String offset="";
@@ -190,12 +201,16 @@ class  DealString{
             int size=tables.size();
             for (int j=0;j<size;j++) {
                 if (j<size-1) {
-                    result+=select+" From "+tables.getJSONArray(j).getString(0)+sqlCondition+" Union ";
+                    result+=select+" From "+tables.getString(j)+sqlCondition+" Union ";
                 } else {
-                    result+=select+" From "+tables.getJSONArray(j).getString(0)+sqlCondition;
+                    result+=select+" From "+tables.getString(j)+sqlCondition;
                 }
 
             }
+        }
+        if(Key.length>1) 
+        {
+            result=result +" ORDER BY Record_Time DESC";
         }
         result=result+" "+limit;
         result=result.replace("+", " ");
@@ -214,7 +229,10 @@ class MyLogHandler extends Formatter{
     } 
 }
 public class RequestDemo extends HttpServlet {
-    private String [] Key1={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
+
+    private String[] Key1 = { "Slot", "Test_Station", "Test_Require", "Product_Model", "SN", "MAC", "Record_Time",
+            "PC_Name", "ATE_Version", "Hardware_Version", "Software_Version", "Software_Number", "Boot_Version",
+            "TestResult" };
     private String [] Key2={"Log"};
     Logger searchrecord=Logger.getLogger("SearchRecord");
     Logger errlog=Logger.getLogger("ErrLog");
@@ -265,8 +283,32 @@ public class RequestDemo extends HttpServlet {
     public void destroy()
     {
     }
+    public static void getPath() {
+    	//System.out.println(this.getClass().getResource("/").getPath());
+    	//System.out.println(System.getProperty("user.dir"));
+    }
+    
     public static void main(String[] args) {
-        String [] Key1={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
+        try {
+        	//RequestDemo a = new RequestDemo();
+        	//System.out.print(a.getPath());
+        	//a.getPath();
+        	//getPath();
+        	//String path =RequestDemo.class.getResource("../jdbc.properties").getPath();
+           // Properties properties =new Properties();
+            //properties.load(new FileInputStream(System.getProperty("user.dir")+"/jdbc.properties")); 
+            //properties.load(new FileInputStream(RequestDemo.class.getResource("jdbc.properties").getPath())); 
+            //String tables=properties.getProperty("Tables");
+            //String [] a=tables.split(",");
+            System.out.println(DealString.getTables());
+        } catch (Exception e) {
+            e.printStackTrace();
+            //TODO: handle exception
+        }
+
+
+
+       /* String [] Key1={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
         String [] Key2={"Log"};
         String queryString="http://www.greatwebtech.cn/search/searchdata?searchMode=ProductInfo&Test_Station=SETMAC&Limit=10";
         Logger searchrecord=Logger.getLogger("SearchRecord");
@@ -276,7 +318,7 @@ public class RequestDemo extends HttpServlet {
           // FileHandler sfHandler = new FileHandler("./SearchRecord.txt");
           //String a=DealString.geturlKeyvalue("Test_Station", queryString);
          // System.out.println(a);
-           FileHandler sfHandler = new FileHandler("./SearchRecord%g.txt",100000,5,true);
+         /*  FileHandler sfHandler = new FileHandler("./SearchRecord%g.txt",100000,5,true);
            sfHandler.setFormatter(new MyLogHandler());       
            searchrecord.addHandler(sfHandler);
            searchCon=DealString.condition2Json(queryString);
@@ -285,9 +327,10 @@ public class RequestDemo extends HttpServlet {
            Result=SearchData.searchData(searchCondition);
            System.out.println(Result);
            //System.out.println(searchCondition);
+           System.out.print(DealString.getTables().getString(1));
         } catch (Exception e) {
             //TODO: handle exception
             e.printStackTrace();
-        }
+        }*/
     }
   }
