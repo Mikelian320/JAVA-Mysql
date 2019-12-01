@@ -1,9 +1,12 @@
 target
+build
+WebContent
 .vscode
 .sts4-cache
-src/test
-src/main/java/cnblogs/Account.java
-src/main/java/jdbc.properties
+.classpath
+.settings
+.project
+.springBeans
 
 # local env files
 .env.local

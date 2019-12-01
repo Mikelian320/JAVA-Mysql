@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<bean id="TestRecordDAO" class="cn.greatwebtech.dao.impl.TestRecordDaoImpl">
+		<property name="driver" value="com.mysql.jdbc.Driver"></property>
+		<property name="dburl" value="jdbc:mysql://10.18.255.116:3306/zzblogo?zeroDateTimeBehavior=round"></property>
+		<property name="user" value="zzbl"></property>
+		<property name="password" value="#Sx4BXya"></property>
+		<property name="tables" value="ac,ap,h_router,h_switch,ml_router,ml_switch,modules,securitypro,smart_classroom"></property>
+	</bean>
+	<bean id="TestRecordService" class="cn.greatwebtech.service.impl.TestRecordServiceImpl">
+		<property name="testDB" ref="TestRecordDAO"></property>
+	</bean>
+</beans>
