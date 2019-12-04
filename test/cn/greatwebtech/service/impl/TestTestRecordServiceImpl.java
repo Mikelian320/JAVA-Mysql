@@ -2,12 +2,12 @@ package cn.greatwebtech.service.impl;
 
 import static org.junit.Assert.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import cn.greatwebtech.service.ITestRecordService;
 
 public class TestTestRecordServiceImpl {
 	//TestRecordServiceImpl TestRecordService = new TestRecordServiceImpl();
@@ -56,7 +56,7 @@ public class TestTestRecordServiceImpl {
 	public void testSQLWithTable() 
 	{
 		System.out.print("SQLWithTable: ");
-		request.setQueryString("searchMode=ProductInfo&Offset=0&Limit=50&SN=G1N40PP00214C&Product_Type=ml_switch&Test_Station=ï¿½Ü¼ï¿½");
+		request.setQueryString("searchMode=ProductInfo&Offset=0&Limit=50&SN=G1N40PP00214C&Product_Type=ml_switch&Test_Station=×Ü¼ì");
 		try {
 			String SQL=TRService.generateSQL(request);
 			System.out.print(SQL);
@@ -73,7 +73,7 @@ public class TestTestRecordServiceImpl {
 		request.setParameter("PC_Name", "AAABBBCCC");
 		request.setParameter("Record_Time", "1572437686000");
 		//request.setParameter("EndTime", "1573820086000");
-		//request.setParameter("Test_Station", "ï¿½Ü¼ï¿½");
+		//request.setParameter("Test_Station", "×Ü¼ì");
 		request.setParameter("Slot", "Chassis");
 		request.setRequestURI("searchMode=ProductInfo&Offset=0&Limit=50&SN=G1N40PP00214C");
 		//request.que
@@ -82,6 +82,15 @@ public class TestTestRecordServiceImpl {
 			System.out.print(SQL);
 		}catch(Exception e) {
 			System.out.print(e.getMessage());
+		}
+	}
+	@Test
+	public void testAOP() 
+	{
+		try {
+			TRService.searchData("");
+		}catch(Exception e){
+			
 		}
 	}
 

@@ -20,9 +20,9 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.springframework.mock.web.MockHttpServletRequest;
-/*service�㣬����������ת��������
- **��URLת��Ϊ��ѯ���
- **��DAO���ص�����ת��Ϊǰ����Ҫ�ĸ�ʽ
+/*service锟姐，锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷转锟斤拷锟斤拷锟斤拷锟斤拷
+ **锟斤拷URL转锟斤拷为锟斤拷询锟斤拷锟�
+ **锟斤拷DAO锟斤拷锟截碉拷锟斤拷锟斤拷转锟斤拷为前锟斤拷锟斤拷要锟侥革拷式
  * 
  * */
 public class TestRecordServiceImpl implements ITestRecordService{
@@ -34,8 +34,10 @@ public class TestRecordServiceImpl implements ITestRecordService{
 	@Override
 	public JSONArray searchData(String queryString)throws Exception {
 		// CALL DAO get database data
+		//可在该函数增加前置通知和异常通知,分别记录查询语句和异常消息
 		try {
-			return testDB.getDataFromDB(queryString);
+			return null;
+			//return testDB.getDataFromDB(queryString);
 		}catch(Exception e) {
 			throw e;
 		}
@@ -44,7 +46,6 @@ public class TestRecordServiceImpl implements ITestRecordService{
 	 * */
 	public String generateSQL(HttpServletRequest request)throws Exception 
 	{
-		//boolean getLog=request.getParameter("searchMode").contains("Log");
 		boolean getLog=getQueryParameter(request.getQueryString(),"searchMode").contains("Log");
 		String SQLString="";
 		try {
@@ -145,7 +146,7 @@ public class TestRecordServiceImpl implements ITestRecordService{
 	}
 	private JSONObject condition2Json(HttpServletRequest request)throws Exception 
 	{
-		JSONObject searchCon= new JSONObject();//Ϊʲô�ᱨ�쳣��
+		JSONObject searchCon= new JSONObject();//为什么锟结报锟届常锟斤拷
 		String [] searchArr={"Slot","Product_Type","Test_Station","Test_Required","Product_Model","SN","MAC","PC_Name","TestResult","StartTime","EndTime","Record_Time","Offset","Limit"};
 		for(String key : searchArr) 
 		{
@@ -154,9 +155,9 @@ public class TestRecordServiceImpl implements ITestRecordService{
 			{
 				/*
 				 * /Key which needs transfer
-				 * 1��slot(SLOT+M1-->SLOT M1)
-				 * 2��Test_Station��Test_Required(UTF-8)
-				 * 3��StartTime��EndTime��RecordTime(TimeStamp-->String)
+				 * 1锟斤拷slot(SLOT+M1-->SLOT M1)
+				 * 2锟斤拷Test_Station锟斤拷Test_Required(UTF-8)
+				 * 3锟斤拷StartTime锟斤拷EndTime锟斤拷RecordTime(TimeStamp-->String)
 				 */
 				try 
 				{
@@ -196,7 +197,7 @@ public class TestRecordServiceImpl implements ITestRecordService{
 		return searchCon;
 	}
 	
-	//У������ǰ�˵����������Ƿ�����,���������׳��쳣
+	//校锟斤拷锟斤拷锟斤拷前锟剿碉拷锟斤拷锟斤拷锟斤拷锟斤拷锟角凤拷锟斤拷锟斤拷,锟斤拷锟斤拷锟斤拷锟斤拷锟阶筹拷锟届常
 	private void validateSearchConditon(JSONObject searchCon) throws Exception
 	{
 		Iterator<String> iterator = searchCon.keys();
@@ -256,7 +257,7 @@ public class TestRecordServiceImpl implements ITestRecordService{
 			}
 		}
 	}
-	//��ʱ���ת��Ϊʱ���ַ���
+	//锟斤拷时锟斤拷锟阶拷锟轿憋拷锟斤拷址锟斤拷锟�
 	private String timeStamp2Date(String timeStampStr) 
 	{
 		String formats="yyyy-MM-dd HH:mm:ss";
@@ -264,7 +265,7 @@ public class TestRecordServiceImpl implements ITestRecordService{
 		String date=new SimpleDateFormat(formats,Locale.CHINA).format(new Date(timestamp));
 		return date;
 	}
-	//��URLת��ΪUTF-8��ʽ
+	//锟斤拷URL转锟斤拷为UTF-8锟斤拷式
 	private String getURLDecode(String str)throws Exception 
 	{
 		try{
@@ -298,7 +299,7 @@ public class TestRecordServiceImpl implements ITestRecordService{
 		String searchMode=request.getParameter("Offset");
 		//String searchMode=request.getRequestURL().toString();
 		try {
-			//String SQL=generateSQL(request);
+			String SQL=generateSQL(request);
 			System.out.print(request.getMethod());
 		}catch(Exception e) {
 			System.out.print(e.getMessage());

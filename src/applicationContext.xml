@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+		
 	<bean id="TestRecordDAO" class="cn.greatwebtech.dao.impl.TestRecordDaoImpl">
 		<property name="driver" value="com.mysql.jdbc.Driver"></property>
 		<property name="dburl" value="jdbc:mysql://10.18.255.116:3306/zzblogo?zeroDateTimeBehavior=round"></property>
@@ -9,7 +12,15 @@
 		<property name="password" value="#Sx4BXya"></property>
 		<property name="tables" value="ac,ap,h_router,h_switch,ml_router,ml_switch,modules,securitypro,smart_classroom"></property>
 	</bean>
+	
 	<bean id="TestRecordService" class="cn.greatwebtech.service.impl.TestRecordServiceImpl">
 		<property name="testDB" ref="TestRecordDAO"></property>
 	</bean>
+	
+	<bean id="LogQueryStr" class="cn.greatewebtech.logger.LogQueryStr"></bean>
+	
+	<aop:config proxy-target-class="true">
+		<aop:pointcut expression="execution(public net.sf.json.JSONArray cn.greatwebtech.service.impl.TestRecordServiceImpl.searchData(java.lang.String))" id="searchData"/>
+		<aop:advisor advice-ref="LogQueryStr" pointcut-ref="searchData"/>
+	</aop:config>
 </beans>
