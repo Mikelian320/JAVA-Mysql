@@ -36,8 +36,9 @@ public class TestRecordServiceImpl implements ITestRecordService{
 		// CALL DAO get database data
 		//可在该函数增加前置通知和异常通知,分别记录查询语句和异常消息
 		try {
-			return null;
+			//return null;
 			//return testDB.getDataFromDB(queryString);
+			throw new Exception("Test Exception");
 		}catch(Exception e) {
 			throw e;
 		}

@@ -88,9 +88,9 @@ public class TestTestRecordServiceImpl {
 	public void testAOP() 
 	{
 		try {
-			TRService.searchData("");
+			TRService.searchData("1111");
 		}catch(Exception e){
-			
+			System.out.println(e.getMessage());
 		}
 	}
 

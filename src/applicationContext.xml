@@ -16,11 +16,19 @@
 	<bean id="TestRecordService" class="cn.greatwebtech.service.impl.TestRecordServiceImpl">
 		<property name="testDB" ref="TestRecordDAO"></property>
 	</bean>
-	
-	<bean id="LogQueryStr" class="cn.greatewebtech.logger.LogQueryStr"></bean>
-	
+	<bean id="LogFormatter" class="cn.greatewebtech.logger.LogFormatter"></bean>
+	<bean id="LogQueryStr" class="cn.greatewebtech.logger.LogQueryStr">
+		<property name="logFormatter" ref="LogFormatter"></property>
+	</bean>
+	<bean id="LogExceptions" class="cn.greatewebtech.logger.LogExceptions">
+		<property name="exceptionFormatter" ref="LogFormatter"></property>
+	</bean>
 	<aop:config proxy-target-class="true">
 		<aop:pointcut expression="execution(public net.sf.json.JSONArray cn.greatwebtech.service.impl.TestRecordServiceImpl.searchData(java.lang.String))" id="searchData"/>
 		<aop:advisor advice-ref="LogQueryStr" pointcut-ref="searchData"/>
+	</aop:config>
+		<aop:config proxy-target-class="true">
+		<aop:pointcut expression="execution(public net.sf.json.JSONArray cn.greatwebtech.service.impl.TestRecordServiceImpl.searchData(java.lang.String))" id="searchData"/>
+		<aop:advisor advice-ref="LogExceptions" pointcut-ref="searchData"/>
 	</aop:config>
 </beans>

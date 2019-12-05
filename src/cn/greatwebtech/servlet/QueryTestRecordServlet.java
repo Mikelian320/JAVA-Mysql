@@ -21,7 +21,7 @@ import net.sf.json.JSONArray;
  */
 @WebServlet("/QueryTestRecordServlet")
 public class QueryTestRecordServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;//声明该参数方便对象的序列化和反序列化
 	private TestRecordServiceImpl TRService;
     
 	@Override
