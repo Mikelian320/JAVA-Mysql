@@ -20,9 +20,9 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.springframework.mock.web.MockHttpServletRequest;
-/*service锟姐，锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷转锟斤拷锟斤拷锟斤拷锟斤拷
- **锟斤拷URL转锟斤拷为锟斤拷询锟斤拷锟�
- **锟斤拷DAO锟斤拷锟截碉拷锟斤拷锟斤拷转锟斤拷为前锟斤拷锟斤拷要锟侥革拷式
+/*service閿熷锛岄敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹杞敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷�
+ **閿熸枻鎷稶RL杞敓鏂ゆ嫹涓洪敓鏂ゆ嫹璇㈤敓鏂ゆ嫹閿燂拷
+ **閿熸枻鎷稤AO閿熸枻鎷烽敓鎴鎷烽敓鏂ゆ嫹閿熸枻鎷疯浆閿熸枻鎷蜂负鍓嶉敓鏂ゆ嫹閿熸枻鎷疯閿熶茎闈╂嫹寮�
  * 
  * */
 public class TestRecordServiceImpl implements ITestRecordService{
@@ -34,11 +34,14 @@ public class TestRecordServiceImpl implements ITestRecordService{
 	@Override
 	public JSONArray searchData(String queryString)throws Exception {
 		// CALL DAO get database data
-		//可在该函数增加前置通知和异常通知,分别记录查询语句和异常消息
+		//
 		try {
+			JSONArray result=new JSONArray();
 			//return null;
-			//return testDB.getDataFromDB(queryString);
-			throw new Exception("Test Exception");
+			result=testDB.getDataFromDB(queryString);
+			System.out.print(result.toString());
+			return result;
+			//throw new Exception("Test Exception");
 		}catch(Exception e) {
 			throw e;
 		}
@@ -58,7 +61,12 @@ public class TestRecordServiceImpl implements ITestRecordService{
 			String limit= getLimitCondition(searchCon);
 			if(tables.size()==1) 
 			{
-				SQLString=select+" FROM "+tables.get(0)+" WHERE "+condition+" ORDER BY Record_Time DESC "+limit;
+				if(!condition.isEmpty()) {
+					SQLString=select+" FROM "+tables.get(0)+" WHERE "+condition+" ORDER BY Record_Time DESC "+limit;
+				}else {
+					SQLString=select+" FROM "+tables.get(0)+" ORDER BY Record_Time DESC "+limit;
+				}
+
 			}else {
 				for(String table:tables) 
 				{
@@ -66,7 +74,11 @@ public class TestRecordServiceImpl implements ITestRecordService{
 					{
 						SQLString+=" UNION ";
 					}
-					SQLString+=select+" FROM "+table+" WHERE "+condition;
+					if(!condition.isEmpty()) {
+						SQLString+=select+" FROM "+table+" WHERE "+condition;
+					}else {
+						SQLString+=select+" FROM "+table;
+					}
 				}
 				SQLString+=" ORDER BY Record_Time DESC "+limit;
 			}
@@ -147,7 +159,7 @@ public class TestRecordServiceImpl implements ITestRecordService{
 	}
 	private JSONObject condition2Json(HttpServletRequest request)throws Exception 
 	{
-		JSONObject searchCon= new JSONObject();//为什么锟结报锟届常锟斤拷
+		JSONObject searchCon= new JSONObject();//涓轰粈涔堥敓缁撴姤閿熷眾甯搁敓鏂ゆ嫹
 		String [] searchArr={"Slot","Product_Type","Test_Station","Test_Required","Product_Model","SN","MAC","PC_Name","TestResult","StartTime","EndTime","Record_Time","Offset","Limit"};
 		for(String key : searchArr) 
 		{
@@ -156,9 +168,9 @@ public class TestRecordServiceImpl implements ITestRecordService{
 			{
 				/*
 				 * /Key which needs transfer
-				 * 1锟斤拷slot(SLOT+M1-->SLOT M1)
-				 * 2锟斤拷Test_Station锟斤拷Test_Required(UTF-8)
-				 * 3锟斤拷StartTime锟斤拷EndTime锟斤拷RecordTime(TimeStamp-->String)
+				 * 1閿熸枻鎷穝lot(SLOT+M1-->SLOT M1)
+				 * 2閿熸枻鎷稵est_Station閿熸枻鎷稵est_Required(UTF-8)
+				 * 3閿熸枻鎷稴tartTime閿熸枻鎷稥ndTime閿熸枻鎷稲ecordTime(TimeStamp-->String)
 				 */
 				try 
 				{
@@ -198,7 +210,7 @@ public class TestRecordServiceImpl implements ITestRecordService{
 		return searchCon;
 	}
 	
-	//校锟斤拷锟斤拷锟斤拷前锟剿碉拷锟斤拷锟斤拷锟斤拷锟斤拷锟角凤拷锟斤拷锟斤拷,锟斤拷锟斤拷锟斤拷锟斤拷锟阶筹拷锟届常
+	//鏍￠敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹鍓嶉敓鍓跨鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓瑙掑嚖鎷烽敓鏂ゆ嫹閿熸枻鎷�,閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹閿熼樁绛规嫹閿熷眾甯�
 	private void validateSearchConditon(JSONObject searchCon) throws Exception
 	{
 		Iterator<String> iterator = searchCon.keys();
@@ -258,7 +270,7 @@ public class TestRecordServiceImpl implements ITestRecordService{
 			}
 		}
 	}
-	//锟斤拷时锟斤拷锟阶拷锟轿憋拷锟斤拷址锟斤拷锟�
+	//閿熸枻鎷锋椂閿熸枻鎷烽敓闃额亷鎷烽敓杞款�╂唻鎷烽敓鏂ゆ嫹鍧�閿熸枻鎷烽敓锟�
 	private String timeStamp2Date(String timeStampStr) 
 	{
 		String formats="yyyy-MM-dd HH:mm:ss";
@@ -266,7 +278,7 @@ public class TestRecordServiceImpl implements ITestRecordService{
 		String date=new SimpleDateFormat(formats,Locale.CHINA).format(new Date(timestamp));
 		return date;
 	}
-	//锟斤拷URL转锟斤拷为UTF-8锟斤拷式
+	//閿熸枻鎷稶RL杞敓鏂ゆ嫹涓篣TF-8閿熸枻鎷峰紡
 	private String getURLDecode(String str)throws Exception 
 	{
 		try{

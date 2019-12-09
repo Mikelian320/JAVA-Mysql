@@ -21,7 +21,7 @@ import net.sf.json.JSONArray;
  */
 @WebServlet("/QueryTestRecordServlet")
 public class QueryTestRecordServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;//声明该参数方便对象的序列化和反序列化
+	private static final long serialVersionUID = 1L;
 	private TestRecordServiceImpl TRService;
     
 	@Override
@@ -45,12 +45,12 @@ public class QueryTestRecordServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String queryStr="";
 		JSONArray result=new JSONArray();
+		response.setCharacterEncoding("utf-8");
+	    response.setContentType("text/javascript;charset=utf-8");
+	    response.setHeader("content-type", "application/json;charset=utf-8");
 		PrintWriter out=response.getWriter();
 		try 
 		{
-		    response.setCharacterEncoding("UTF-8");
-		    response.setContentType("text/javascript");
-		    response.setHeader("content-type", "application/json;charset=UTF-8");
 			queryStr=TRService.generateSQL(request);
 			result=TRService.searchData(queryStr);
 			response.setStatus(200);

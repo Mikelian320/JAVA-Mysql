@@ -16,11 +16,11 @@
 	<bean id="TestRecordService" class="cn.greatwebtech.service.impl.TestRecordServiceImpl">
 		<property name="testDB" ref="TestRecordDAO"></property>
 	</bean>
-	<bean id="LogFormatter" class="cn.greatewebtech.logger.LogFormatter"></bean>
-	<bean id="LogQueryStr" class="cn.greatewebtech.logger.LogQueryStr">
+	<bean id="LogFormatter" class="cn.greatwebtech.logger.LogFormatter"></bean>
+	<bean id="LogQueryStr" class="cn.greatwebtech.logger.LogQueryStr">
 		<property name="logFormatter" ref="LogFormatter"></property>
 	</bean>
-	<bean id="LogExceptions" class="cn.greatewebtech.logger.LogExceptions">
+	<bean id="LogExceptions" class="cn.greatwebtech.logger.LogExceptions">
 		<property name="exceptionFormatter" ref="LogFormatter"></property>
 	</bean>
 	<aop:config proxy-target-class="true">
