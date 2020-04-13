@@ -310,7 +310,7 @@ public class RequestDemo extends HttpServlet {
 
        /* String [] Key1={"Slot","Test_Station","Test_Require","Product_Model","SN","MAC","Record_Time","PC_Name","ATE_Version","Hardware_Version","Software_Version","Software_Number","Boot_Version","TestResult"}; 
         String [] Key2={"Log"};
-        String queryString="http://www.greatwebtech.cn/search/searchdata?searchMode=ProductInfo&Test_Station=SETMAC&Limit=10";
+        String queryString="http://table.greatwebtech.cn/search/searchdata?searchMode=ProductInfo&Test_Station=SETMAC&Limit=10";
         Logger searchrecord=Logger.getLogger("SearchRecord");
         JSONObject searchCon=new JSONObject();
         JSONArray Result=new JSONArray();
