@@ -1,5 +1,5 @@
 # GreatWebTech
-GreatWebTech is one of my website. Visit [Demo](http://www.greatwebtech.cn)
+GreatWebTech is one of my website. Visit [Demo](http://table.greatwebtech.cn)
 
 ## Start
 ```
@@ -47,7 +47,7 @@ npm run test:unit
 
 ```
 window.CONFIG = {
-  SEARCH_ORIGIN: 'http://www.greatwebtech.cn/search/',
+  SEARCH_ORIGIN: 'http://table.greatwebtech.cn/search/',
   TYPE: 'only-search',
   LOAD_DATA_ENTER_PAGE: true,
 };

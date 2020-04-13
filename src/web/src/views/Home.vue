@@ -1,7 +1,7 @@
 <template>
   <main class="home">
     <img alt="Vue logo" :src="logoSrc">
-    <HelloWorld msg="Welcome to www.greatwebtech.cn"/>
+    <HelloWorld msg="Welcome to table.greatwebtech.cn"/>
   </main>
 </template>
 
