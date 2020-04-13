@@ -9,7 +9,7 @@ pipeline {
   stages {
     stage('Install') {
       steps {
-        dir(path: '${env.WORKSPACE}/src/web') {
+        dir(path: 'src/web') {
           sh 'npm install'
         }
 
@@ -18,7 +18,7 @@ pipeline {
 
     stage('Build') {
       steps {
-        dir(path: '${env.WORKSPACE}/src/web') {
+        dir(path: 'src/web') {
           sh 'export NODE_OPTIONS=--max_old_space_size=1000 && npm run build'
         }
 
@@ -27,7 +27,7 @@ pipeline {
 
     stage('Publish') {
       steps {
-        dir(path: '${env.WORKSPACE}/src/web') {
+        dir(path: 'src/web') {
           sh 'scp -r dist autojenkins@www.greatwebtech.cn:~/JAVA-Mysql'
         }
 
