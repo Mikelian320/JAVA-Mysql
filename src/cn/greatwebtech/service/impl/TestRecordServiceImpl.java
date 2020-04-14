@@ -39,7 +39,7 @@ public class TestRecordServiceImpl implements ITestRecordService{
 			JSONArray result=new JSONArray();
 			//return null;
 			result=testDB.getDataFromDB(queryString);
-			System.out.print(result.toString());
+			//System.out.print(result.toString());
 			return result;
 			//throw new Exception("Test Exception");
 		}catch(Exception e) {
