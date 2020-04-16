@@ -7,10 +7,10 @@
 		
 	<bean id="TestRecordDAO" class="cn.greatwebtech.dao.impl.TestRecordDaoImpl">
 		<property name="driver" value="com.mysql.jdbc.Driver"></property>
-		<property name="dburl" value="jdbc:mysql://10.18.255.116:3306/zzblogo?zeroDateTimeBehavior=round"></property>
-		<property name="user" value="zzbl"></property>
-		<property name="password" value="#Sx4BXya"></property>
-		<property name="tables" value="ac,ap,h_router,h_switch,ml_router,ml_switch,modules,securitypro,smart_classroom"></property>
+		<property name="dburl" value="jdbc:mysql://132.232.0.149:3306/zzblogo?zeroDateTimeBehavior=round"></property>
+		<property name="user" value="Mikelian"></property>
+		<property name="password" value="123456"></property>
+		<property name="tables" value="ml_switch,securitypro"></property>
 	</bean>
 	
 	<bean id="TestRecordService" class="cn.greatwebtech.service.impl.TestRecordServiceImpl">
