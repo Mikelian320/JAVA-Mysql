@@ -48,7 +48,6 @@ npm run test:unit
 ```
 window.CONFIG = {
   SEARCH_ORIGIN: 'http://table.greatwebtech.cn/search/',
-  TYPE: 'only-search',
   LOAD_DATA_ENTER_PAGE: true,
 };
 ```
@@ -56,7 +55,5 @@ window.CONFIG = {
 ## CONFIG
 
 SEARCH_ORIGIN 搜索的后端接口地址
-
-TYPE: only-search, 只有搜索的路由 / TYPE: 其他值, 包括 home about table 路由
 
 LOAD_DATA_ENTER_PAGE, true/false 进入页面后是否加载数据
