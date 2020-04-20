@@ -1,8 +1,8 @@
 pipeline {
   agent {
     docker {
-      image 'maven'
-      args '-m 1G -v /home/jenkins/.ssh:/home/root/.ssh'
+      image 'maven-ssh-v1.0'
+      args '-u node -m 1G -v /home/jenkins/.ssh:/home/root/.ssh'
     }
   }
   stages {
