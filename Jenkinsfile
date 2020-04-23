@@ -18,5 +18,11 @@ pipeline {
       }
     }
 
+    stage('Restart') {
+      steps {
+        sh 'ssh autojenkins@www.greatwebtech.cn "./restartSearchMysql.sh"'
+      }
+    }
+
   }
 }
