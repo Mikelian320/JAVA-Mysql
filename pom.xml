@@ -4,7 +4,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>cn.greatweb</groupId>
+  <groupId>cn.greatwebtech</groupId>
   <artifactId>spring-web-search</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>spring-search-mysql</name>
@@ -174,14 +174,14 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <finalName>SearchMysql</finalName>
+                    <finalName>Spring-web-search</finalName>
                     <descriptorRefs>
                         <!-- 将依赖一起打包到 JAR -->
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <archive>
                       <manifest>
-                        <mainClass>cnblogs.App</mainClass>
+                        <mainClass>cn.greatwebtech.servlet.QueryTestRecordSevlet</mainClass>
                       </manifest>
                     </archive>
                 </configuration>
