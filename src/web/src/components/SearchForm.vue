@@ -51,26 +51,14 @@
         </el-col>
         <el-col :span="8" :xs="24" :sm="12" :lg="8" :xl="6">
           <el-form-item label="测试站点">
-            <el-select
+            <el-autocomplete
+              clearable
+              class="inline-input"
               v-model="formInline.site"
-              placeholder="全部 (可输入)"
-              filterable
-              allow-create
-              default-first-option
-            >
-              <el-option label="全部" value></el-option>
-              <el-option label="SETMAC" value="SETMAC"></el-option>
-              <el-option label="基本测试" value="基本测试"></el-option>
-              <el-option label="基本测试1" value="基本测试1"></el-option>
-              <el-option label="查看烤机记录" value="查看烤机记录"></el-option>
-              <el-option label="查看烤机记录1" value="查看烤机记录1"></el-option>
-              <el-option label="下装主程序" value="下装主程序"></el-option>
-              <el-option label="总检" value="总检"></el-option>
-              <el-option label="连通" value="连通"></el-option>
-              <el-option label="OQC按单重检" value="OQC按单重检"></el-option>
-              <el-option label="下装生测程序" value="下装生测程序"></el-option>
-              <el-option label="吞吐测试" value="吞吐测试"></el-option>
-            </el-select>
+              :fetch-suggestions="siteSuggestions"
+              placeholder="请输入测试站点"
+              @select="handleSelectSite"
+            ></el-autocomplete>
           </el-form-item>
         </el-col>
         <el-col :span="8" :xs="24" :sm="12" :lg="8" :xl="6">
@@ -106,6 +94,21 @@
   </el-form>
 </template>
 <script>
+
+const siteOptions = [
+  { value: 'SETMAC' },
+  { value: '基本测试' },
+  { value: '基本测试1' },
+  { value: '查看烤机记录' },
+  { value: '查看烤机记录1' },
+  { value: '下装主程序' },
+  { value: '总检' },
+  { value: '连通' },
+  { value: 'OQC按单重检' },
+  { value: '下装生测程序' },
+  { value: '吞吐测试' },
+];
+
 export default {
   data() {
     return {
@@ -114,8 +117,11 @@ export default {
       },
       formInline: {
         SN: '',
-        user: '',
-        region: '',
+        mac: '',
+        serial: '',
+        type: '',
+        site: '',
+        result: '',
         dateRange: [],
       },
       rules: {
@@ -178,6 +184,13 @@ export default {
     };
   },
   methods: {
+    siteSuggestions(querystring, cb) {
+      const result = siteOptions.filter(option => option.value.includes(querystring));
+      cb(result);
+    },
+    handleSelectSite(option) {
+      this.formInline.site = option.value;
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -212,6 +225,9 @@ export default {
 };
 </script>
 <style>
+.inline-input {
+  width: 100%
+}
 .demo-form-inline {
   text-align: left;
   border-top: 1px solid #ebeef5;
