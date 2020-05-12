@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import cn.greatwebtech.service.ITestRecordService;
 import cn.greatwebtech.service.impl.TestRecordServiceImpl;
 import net.sf.json.JSONArray;
 

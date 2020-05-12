@@ -17,7 +17,7 @@ public class LogExceptions implements ThrowsAdvice {
     	FileHandler efHandler=null;
     	try 
     	{
-    		efHandler = new FileHandler("./Errlog%g.txt",100000,5,true);//�����ʼ������Σ�·������־��С���ޣ�Byte������־����������׷��д��
+    		efHandler = new FileHandler("./Errlog%g.txt",100000,5,true);
     		efHandler.setFormatter(exceptionFormatter);
     		errorLog.addHandler(efHandler);
     		errorLog.warning(ex.toString());

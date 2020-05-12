@@ -12,7 +12,8 @@ WebContent
 # local env files
 .env.local
 .env.*.local
-
+Err*
+SearchRecord*
 # Log files
 npm-debug.log*
 yarn-debug.log*
