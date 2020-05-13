@@ -3,6 +3,7 @@ import {
   Dropdown, DropdownMenu, DropdownItem,
   Collapse, CollapseItem,
   Table, TableColumn, Form, FormItem, Input, Button, Option, Select, Message, Loading,
+  Autocomplete,
   DatePicker, TimePicker, Card,
   Tag,
   Row, Col,
@@ -34,6 +35,7 @@ Vue.use(CollapseItem);
 Vue.use(Tag);
 Vue.use(Row);
 Vue.use(Col);
+Vue.use(Autocomplete);
 
 Vue.use(Loading.directive);
 
