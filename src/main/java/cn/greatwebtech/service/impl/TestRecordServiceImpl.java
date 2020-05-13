@@ -12,14 +12,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Test;
-
 import cn.greatwebtech.dao.impl.TestRecordDaoImpl;
 import cn.greatwebtech.service.ITestRecordService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
-import org.springframework.mock.web.MockHttpServletRequest;
 /*service閿熷锛岄敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹杞敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷�
  **閿熸枻鎷稶RL杞敓鏂ゆ嫹涓洪敓鏂ゆ嫹璇㈤敓鏂ゆ嫹閿燂拷
  **閿熸枻鎷稤AO閿熸枻鎷烽敓鎴鎷烽敓鏂ゆ嫹閿熸枻鎷疯浆閿熸枻鎷蜂负鍓嶉敓鏂ゆ嫹閿熸枻鎷疯閿熶茎闈╂嫹寮�
@@ -300,7 +296,7 @@ public class TestRecordServiceImpl implements ITestRecordService{
 			return null;
 		}	
 	}
-	@Test
+/* 	@Test
 	public void testSQL() 
 	{
 		//HttpServletRequest request =new HttpServletRequest();
@@ -318,5 +314,5 @@ public class TestRecordServiceImpl implements ITestRecordService{
 			System.out.print(e.getMessage());
 		}
 		//System.out.print("TEST");
-	}
+	} */
 }
