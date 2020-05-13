@@ -6,10 +6,12 @@
     label-width="80px"
     ref="ruleForm"
     class="demo-form-inline"
+    @submit.native.prevent
+    @keyup.enter.native="submitForm('ruleForm')"
   >
     <div class="simple-search">
       <el-form-item label="序列号" prop="SN" :rules="rules.SN">
-        <el-input v-model="formInline.SN" placeholder="请输入13位序列号" clearable></el-input>
+        <el-input v-model="formInline.SN" placeholder="请输入13位序列号" clearable />
         <transition name="button">
           <el-button v-if="!state.showAdvance" type="primary" @click="submitForm('ruleForm')">
             查询
