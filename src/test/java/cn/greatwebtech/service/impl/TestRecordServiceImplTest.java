@@ -127,5 +127,20 @@ public class TestRecordServiceImplTest {
 		}
 	}
 
+	@Test
+	public void testSearchByTesrRequire()
+	{
+		try {
+			System.out.println("===================查询测试记录=================");
+			request.setQueryString("searchMode=ProductInfo&Offset=0&Limit=50&SN=G1N40PP00214C&Product_Type=ml_switch&Test_Require=以管理板为主&Test_Station=总检");
+			JSONArray result=TRService.searchData(TRService.generateSQL(request));
+			System.out.println(result.toString());
+			assertTrue("查询测试记录失败，查询结果集为空", !result.isEmpty());
+		}catch(Exception e){
+			assertTrue("查询测试记录失败，异常信息:"+e.getMessage(), false);
+			//System.out.println(e.getMessage());
+		}
+	}
+
 
 }
