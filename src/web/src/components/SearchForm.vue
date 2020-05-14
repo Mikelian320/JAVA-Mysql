@@ -38,6 +38,11 @@
           </el-form-item>
         </el-col>
         <el-col :span="8" :xs="24" :sm="12" :lg="8" :xl="6">
+          <el-form-item label="测试需求">
+            <el-input v-model="formInline.testRequire"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8" :xs="24" :sm="12" :lg="8" :xl="6">
           <el-form-item label="产品类型">
             <el-select v-model="formInline.type" placeholder="全部">
               <el-option label="全部" value></el-option>
@@ -125,6 +130,7 @@ export default {
         site: '',
         result: '',
         dateRange: [],
+        testRequire: '',
       },
       rules: {
         SN: [
@@ -197,7 +203,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const {
-            SN, mac, type, site, serial, result,
+            SN, mac, type, site, serial, result, testRequire,
           } = this.$data.formInline;
           let { dateRange } = this.$data.formInline;
           // fix dateRange is null
@@ -211,7 +217,7 @@ export default {
             Product_Model: serial && serial.trim(),
             Product_Type: type,
             Test_Station: site,
-            TestResult: result,
+            Test_Require: testRequire,
             StartTime: start && start.valueOf(),
             EndTime: end && end.valueOf(),
           });
