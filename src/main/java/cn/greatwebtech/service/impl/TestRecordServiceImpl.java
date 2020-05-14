@@ -16,11 +16,8 @@ import cn.greatwebtech.dao.impl.TestRecordDaoImpl;
 import cn.greatwebtech.service.ITestRecordService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-/*service閿熷锛岄敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹杞敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷�
- **閿熸枻鎷稶RL杞敓鏂ゆ嫹涓洪敓鏂ゆ嫹璇㈤敓鏂ゆ嫹閿燂拷
- **閿熸枻鎷稤AO閿熸枻鎷烽敓鎴鎷烽敓鏂ゆ嫹閿熸枻鎷疯浆閿熸枻鎷蜂负鍓嶉敓鏂ゆ嫹閿熸枻鎷疯閿熶茎闈╂嫹寮�
- * 
- * */
+
+
 public class TestRecordServiceImpl implements ITestRecordService{
 
 	private TestRecordDaoImpl testDB;
@@ -76,7 +73,10 @@ public class TestRecordServiceImpl implements ITestRecordService{
 						SQLString+=select+" FROM "+table;
 					}
 				}
-				SQLString+=" ORDER BY Record_Time DESC "+limit;
+				//非查询LOG时增加按时间降序排列，如果查询LOG不进行排列（由于时间为查询条件在UNION语句下会报错）
+				if(!getLog){
+					SQLString+=" ORDER BY Record_Time DESC "+limit;
+				}
 			}
 		}catch(Exception e) {
 			throw e;
@@ -155,7 +155,7 @@ public class TestRecordServiceImpl implements ITestRecordService{
 	}
 	private JSONObject condition2Json(HttpServletRequest request)throws Exception 
 	{
-		JSONObject searchCon= new JSONObject();//涓轰粈涔堥敓缁撴姤閿熷眾甯搁敓鏂ゆ嫹
+		JSONObject searchCon= new JSONObject();
 		String [] searchArr={"Slot","Product_Type","Test_Station","Test_Required","Product_Model","SN","MAC","PC_Name","TestResult","StartTime","EndTime","Record_Time","Offset","Limit"};
 		for(String key : searchArr) 
 		{
@@ -164,16 +164,16 @@ public class TestRecordServiceImpl implements ITestRecordService{
 			{
 				/*
 				 * /Key which needs transfer
-				 * 1閿熸枻鎷穝lot(SLOT+M1-->SLOT M1)
-				 * 2閿熸枻鎷稵est_Station閿熸枻鎷稵est_Required(UTF-8)
-				 * 3閿熸枻鎷稴tartTime閿熸枻鎷稥ndTime閿熸枻鎷稲ecordTime(TimeStamp-->String)
+				 * 1Slot(SLOT+M1-->SLOT M1)
+				 * 2Test_Station转化为UTF-8编码(UTF-8)
+				 * 3时间戳转换为字符串(TimeStamp-->String)
 				 */
 				try 
 				{
 					switch(key) 
 					{
 						case "Slot":
-							value.replace("+", " ");
+							value=value.replace("+", " ");
 							break;
 						case "Test_Station":
 						case "Test_Required":
