@@ -19,7 +19,7 @@ public class LogQueryStr implements MethodBeforeAdvice{
     	Logger searchRecord=Logger.getLogger("SearchRecord");
     	FileHandler sfHandler=null;
     	try {
-    		sfHandler = new FileHandler(System.getProperty("user.dir")+"/SearchRecord%g.txt",100000,5,true);//�����ʼ������Σ�·������־��С���ޣ�Byte������־����������׷��д��
+    		sfHandler = new FileHandler(System.getProperty("user.dir")+"/SearchRecord%g.txt",100000,5,true);
     		sfHandler.setFormatter(logFormatter);
     		searchRecord.addHandler(sfHandler);
     		searchRecord.info(arg1[0].toString());
