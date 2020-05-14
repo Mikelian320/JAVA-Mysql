@@ -156,7 +156,7 @@ public class TestRecordServiceImpl implements ITestRecordService{
 	private JSONObject condition2Json(HttpServletRequest request)throws Exception 
 	{
 		JSONObject searchCon= new JSONObject();
-		String [] searchArr={"Slot","Product_Type","Test_Station","Test_Required","Product_Model","SN","MAC","PC_Name","TestResult","StartTime","EndTime","Record_Time","Offset","Limit"};
+		String [] searchArr={"Slot","Product_Type","Test_Station","Test_Require","Product_Model","SN","MAC","PC_Name","TestResult","StartTime","EndTime","Record_Time","Offset","Limit"};
 		for(String key : searchArr) 
 		{
 			String value = getQueryParameter(request.getQueryString(),key);
@@ -176,7 +176,7 @@ public class TestRecordServiceImpl implements ITestRecordService{
 							value=value.replace("+", " ");
 							break;
 						case "Test_Station":
-						case "Test_Required":
+						case "Test_Require":
 							value=getURLDecode(value);
 							break;
 						case "StartTime":
