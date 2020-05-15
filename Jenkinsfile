@@ -1,36 +1,26 @@
 pipeline {
   agent {
     docker {
-      image 'node:12.14'
-      args '-m 1G -v /home/jenkins/.ssh:/home/node/.ssh'
+      image 'maven-ssh:v1.0'
+      args '-u node -m 1G -v /home/jenkins/.ssh:/home/root/.ssh'
     }
-
   }
   stages {
-    stage('Install') {
+    stage('Compile') {
       steps {
-        dir(path: 'src/web') {
-          sh 'npm install'
-        }
-
-      }
-    }
-
-    stage('Build') {
-      steps {
-        dir(path: 'src/web') {
-          sh 'export NODE_OPTIONS=--max_old_space_size=1000 && npm run build'
-        }
-
+        sh 'mvn assembly:assembly'
       }
     }
 
     stage('Publish') {
       steps {
-        dir(path: 'src/web') {
-          sh 'scp -r dist autojenkins@www.greatwebtech.cn:~/JAVA-Mysql'
-        }
+        sh 'scp target/Spring-web-search-jar-with-dependencies.jar autojenkins@www.greatwebtech.cn:~/'
+      }
+    }
 
+    stage('Restart') {
+      steps {
+        sh 'ssh autojenkins@www.greatwebtech.cn "./restartSearchMysql.sh Spring-web-search-jar-with-dependencies.jar"'
       }
     }
 
