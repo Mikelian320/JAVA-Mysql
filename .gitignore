@@ -1,18 +1,19 @@
 target
+build
+WebContent
 .vscode
 .sts4-cache
-src/test
-src/main/java/cnblogs/Account.java
-src/main/java/jdbc.properties
-.metadata/
+.classpath
+.settings
+.project
 .springBeans
-WebContent/
-build/
+.metadata
 
 # local env files
 .env.local
 .env.*.local
-
+Err*
+SearchRecord*
 # Log files
 npm-debug.log*
 yarn-debug.log*
