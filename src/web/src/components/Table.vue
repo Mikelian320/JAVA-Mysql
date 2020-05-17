@@ -11,7 +11,6 @@
         v-loading="loading"
         element-loading-text="拼命加载中"
         @row-dblclick="handleClick"
-        v-el-table-infinite-scroll="load"
       >
         <el-table-column prop="slot" label="槽位"></el-table-column>
         <el-table-column prop="test_site" label="测试站点" width="120"></el-table-column>
@@ -28,6 +27,16 @@
           </template>
         </el-table-column>
       </el-table>
+        <el-pagination
+          :page-size="pagination.limit"
+          :page-sizes="[50, 100, 200]"
+          :current-page="pagination.page"
+          @current-change="pageChange"
+          @size-change="pageSizeChange"
+          background
+          layout="sizes, prev, pager, next"
+          >
+        </el-pagination>
     </div>
     <el-card class="box-card" v-loading="log.loading">
       <div slot="header">
@@ -70,9 +79,8 @@ import SearchForm from './SearchForm.vue';
 import checkLogin from '@/utils/checkLogin';
 
 const initPaginationInfo = {
-  offset: 0,
+  page: 1,
   limit: 50,
-  noMore: false,
 };
 
 export default {
@@ -124,25 +132,6 @@ export default {
     };
   },
   methods: {
-    load() {
-      if (this.tableData.length === 0) {
-        // 无数据时不加载数据，必须通过 search 触发一次后才能调用 load
-        return;
-      }
-      if (this.pagination.noMore) {
-        this.$message('无更多数据');
-        return;
-      }
-      if (!this.loading) {
-        this.pagination = {
-          offset: this.pagination.offset + this.pagination.limit,
-          limit: 10,
-        };
-        this.pagination.limit = 10;
-        this.searchData();
-        console.log('TODO: load more');
-      }
-    },
     handleCommand(command) {
       switch (command) {
         case 'download':
@@ -180,7 +169,9 @@ export default {
           }
         });
       }
-      this.pagination = initPaginationInfo;
+      this.setPagination({
+        page: 1,
+      });
       this.searchParams = newParams;
       this.tableKey = new Date().valueOf();
       this.searchData();
@@ -192,11 +183,12 @@ export default {
       }
       this.loading = true;
       try {
+        const { limit, page } = this.pagination;
         const res = await axios.get(`${SEARCH_ORIGIN}searchdata`, {
           params: {
             searchMode: 'ProductInfo',
-            Offset: this.pagination.offset,
-            Limit: this.pagination.limit,
+            Offset: (page - 1) * limit,
+            Limit: limit,
             ...this.searchParams,
           },
         });
@@ -216,16 +208,7 @@ export default {
           boot_version: item[12],
           result: item[13],
         }));
-        if (this.pagination.offset === 0) {
-          this.tableData = data;
-        } else {
-          this.tableData = this.tableData.concat(data);
-        }
-
-        if (data.length === 0) {
-          this.$message('无更多数据');
-          this.pagination.noMore = true;
-        }
+        this.tableData = data;
       } catch (error) {
         this.$message.error('数据出错了~');
       }
@@ -261,6 +244,25 @@ export default {
         this.log.loading = false;
         this.$message.error('数据出错了~');
       }
+    },
+    setPagination(params) {
+      this.pagination = {
+        ...this.pagination,
+        ...params,
+      };
+    },
+    pageChange(page) {
+      this.setPagination({
+        page,
+      });
+      this.searchData();
+    },
+    pageSizeChange(size) {
+      this.setPagination({
+        page: 1,
+        limit: size,
+      });
+      this.searchData();
     },
   },
   components: {
