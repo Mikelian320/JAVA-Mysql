@@ -2,6 +2,7 @@ package cn.greatwebtech.dao.impl;
 
 import java.sql.*;
 
+import cn.greatwebtech.dao.AuthorityData;
 import cn.greatwebtech.dao.ITestRecordDao;
 //import cn.greatwebtech.dao.ITestRecordDao;
 //import ITestRecordDao;
@@ -9,33 +10,8 @@ import net.sf.json.JSONArray;
 
 
 public class TestRecordDaoImpl implements ITestRecordDao {
-	public String driver;
-	private String dburl;
-	private String user;
-	private String password;
-	public String tables;
-
-
-
-	public void setDriver(final String driver) {
-		this.driver = driver;
-	}
-
-	public void setDburl(final String dburl) {
-		this.dburl = dburl;
-	}
-
-	public void setUser(final String user) {
-		this.user = user;
-	}
-
-	public void setPassword(final String password) {
-		this.password = password;
-	}
-
-	public void setTables(final String tables) {
-		this.tables = tables;
-	}
+	private AuthorityData  authorityData=null;
+	
 
 	@Override
 	public JSONArray getDataFromDB(final String SQL) throws Exception {
@@ -43,8 +19,8 @@ public class TestRecordDaoImpl implements ITestRecordDao {
 		Statement stmt = null;
 		final JSONArray dataSet = new JSONArray();
 		try {
-			Class.forName(driver);
-			conn = DriverManager.getConnection(dburl, user, password);
+			Class.forName(authorityData.driver);
+			conn = DriverManager.getConnection(authorityData.dburl, authorityData.user, authorityData.password);
 			stmt = conn.createStatement();
 			final ResultSet data = stmt.executeQuery(SQL);
 			final int columnCount = data.getMetaData().getColumnCount();
@@ -73,6 +49,14 @@ public class TestRecordDaoImpl implements ITestRecordDao {
 				throw e;
 			}
 		}
+	}
+
+	public AuthorityData getAuthorityData() {
+		return authorityData;
+	}
+
+	public void setAuthorityData(AuthorityData authorityData) {
+		this.authorityData = authorityData;
 	}
 
 }

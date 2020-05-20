@@ -22,6 +22,8 @@ public class TestRecordServiceImplTest {
 	ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 	MockHttpServletRequest request= new MockHttpServletRequest();
 	TestRecordServiceImpl TRService=null;
+	TestLogServiceImpl TLService=null;
+	TestCountServiceImpl TCService=null;
 	String SqlWithTable="SELECT Slot,Test_Station,Test_Require,Product_Model,SN,MAC,Record_Time,PC_Name,ATE_Version,Hardware_Version,Software_Version,Software_Number,Boot_Version,TestResult FROM ml_switch WHERE Test_Station='总检' AND SN='G1N40PP00214C'  ORDER BY Record_Time DESC limit 0,50";
 	String SqlWithoutTable="SELECT Slot,Test_Station,Test_Require,Product_Model,SN,MAC,Record_Time,PC_Name,ATE_Version,Hardware_Version,Software_Version,Software_Number,Boot_Version,TestResult FROM ml_switch WHERE Test_Station='总检' AND SN='G1N40PP00214C'"
 	+"  UNION SELECT Slot,Test_Station,Test_Require,Product_Model,SN,MAC,Record_Time,PC_Name,ATE_Version,Hardware_Version,Software_Version,Software_Number,Boot_Version,TestResult FROM securitypro WHERE Test_Station='总检' AND SN='G1N40PP00214C'"
@@ -32,6 +34,8 @@ public class TestRecordServiceImplTest {
 	{
 		request.setCharacterEncoding("UTF-8");
 		TRService=(TestRecordServiceImpl)context.getBean("TestRecordService");
+		TLService=(TestLogServiceImpl)context.getBean("TestLogService");
+		TCService=(TestCountServiceImpl)context.getBean("TestCountService");
 	}
 	
 	@Test
@@ -92,7 +96,7 @@ public class TestRecordServiceImplTest {
 		//request.que
 		try {
 			System.out.println("===========测试查询LOG SQL语句===============");
-			String SQL=TRService.generateSQL(request);
+			String SQL=TLService.generateSQL(request);
 			System.out.println(SQL);
 		}catch(Exception e) {
 			System.out.print(e.getMessage());
@@ -119,8 +123,8 @@ public class TestRecordServiceImplTest {
 		try {
 			System.out.println("===================查询Log测试=================");
 			request.setQueryString("searchMode=Log&SN=G1N40PP002696&PC_Name=BFEBFBFF000506E3&Record_Time=1558321157000&Slot=Slot+M1");
-			TRService.searchData(TRService.generateSQL(request));
-			//System.out.println(result.toString());
+			JSONArray result=TLService.searchData(TLService.generateSQL(request));
+			System.out.println(result.toString());
 		}catch(Exception e){
 			//System.out.println(e.getMessage());
 			assertTrue("查询LOG测试失败，异常信息:"+e.getMessage(), false);
@@ -134,6 +138,23 @@ public class TestRecordServiceImplTest {
 			System.out.println("===================查询测试记录=================");
 			request.setQueryString("searchMode=ProductInfo&Offset=0&Limit=50&SN=G1N40PP00214C&Product_Type=ml_switch&Test_Require=以管理板为主&Test_Station=总检");
 			JSONArray result=TRService.searchData(TRService.generateSQL(request));
+			System.out.println(result.toString());
+			assertTrue("查询测试记录失败，查询结果集为空", !result.isEmpty());
+		}catch(Exception e){
+			assertTrue("查询测试记录失败，异常信息:"+e.getMessage(), false);
+			//System.out.println(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testCount()
+	{
+		try {
+			System.out.println("===================查询测试记录总数=================");
+			request.setQueryString("searchMode=ProductInfo&Offset=0&Limit=50&Product_Model=S5750-24GT8SFP-P&Product_Type=ml_switch&Test_Require=以管理板为主&Test_Station=总检");
+			//TCService.generateSQL(request);
+			System.out.println(TCService.generateSQL(request));
+			JSONArray result=TCService.searchData(TCService.generateSQL(request));
 			System.out.println(result.toString());
 			assertTrue("查询测试记录失败，查询结果集为空", !result.isEmpty());
 		}catch(Exception e){

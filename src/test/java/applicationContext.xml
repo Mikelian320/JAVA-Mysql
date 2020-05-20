@@ -5,16 +5,33 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
 		
-	<bean id="TestRecordDAO" class="cn.greatwebtech.dao.impl.TestRecordDaoImpl">
+	<bean id="AuthorityData" class="cn.greatwebtech.dao.AuthorityData">
 		<property name="driver" value="com.mysql.jdbc.Driver"></property>
 		<property name="dburl" value="jdbc:mysql://132.232.0.149:3306/zzblogo?zeroDateTimeBehavior=round"></property>
 		<property name="user" value="Mikelian"></property>
 		<property name="password" value="123456"></property>
 		<property name="tables" value="ml_switch,securitypro"></property>
 	</bean>
-	
+	<bean id="TestRecordDAO" class="cn.greatwebtech.dao.impl.TestRecordDaoImpl">
+		<property name="authorityData" ref="AuthorityData"></property>
+	</bean>
+	<bean id="TestCountDAO" class="cn.greatwebtech.dao.impl.TestCountDaoImpl">
+		<property name="authorityData" ref="AuthorityData"></property>
+	</bean>
+	<bean id="DealQueryString" class="cn.greatwebtech.service.impl.DealQueryString">	
+		<property name="tables" value="ml_switch,securitypro"></property>
+	</bean>
 	<bean id="TestRecordService" class="cn.greatwebtech.service.impl.TestRecordServiceImpl">
 		<property name="testDB" ref="TestRecordDAO"></property>
+		<property name="dealQS" ref="DealQueryString"></property>
+	</bean>
+	<bean id="TestLogService" class="cn.greatwebtech.service.impl.TestLogServiceImpl">
+		<property name="testDB" ref="TestRecordDAO"></property>
+		<property name="dealQS" ref="DealQueryString"></property>
+	</bean>
+	<bean id="TestCountService" class="cn.greatwebtech.service.impl.TestCountServiceImpl">
+		<property name="testDB" ref="TestCountDAO"></property>
+		<property name="dealQS" ref="DealQueryString"></property>
 	</bean>
 	<bean id="LogFormatter" class="cn.greatwebtech.logger.LogFormatter"></bean>
 	<bean id="LogQueryStr" class="cn.greatwebtech.logger.LogQueryStr">
