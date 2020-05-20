@@ -12,6 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import cn.greatwebtech.service.ISearchService;
+import cn.greatwebtech.service.impl.DealQueryString;
+import cn.greatwebtech.service.impl.TestCountServiceImpl;
+import cn.greatwebtech.service.impl.TestLogServiceImpl;
 import cn.greatwebtech.service.impl.TestRecordServiceImpl;
 import net.sf.json.JSONArray;
 
@@ -21,13 +25,20 @@ import net.sf.json.JSONArray;
 @WebServlet("/QueryTestRecordServlet")
 public class QueryTestRecordServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private DealQueryString dealQS =new DealQueryString();
 	private TestRecordServiceImpl TRService;
+	private TestLogServiceImpl TLService;
+	private TestCountServiceImpl TCService;
+	private ISearchService ITService;
     
 	@Override
 	public void init() throws ServletException
 	{
 		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 		TRService=(TestRecordServiceImpl)context.getBean("TestRecordService");
+		TLService=(TestLogServiceImpl)context.getBean("TestLogService");
+		TCService=(TestCountServiceImpl)context.getBean("TestCountService");
+		
 	}
 	
     /**
@@ -50,8 +61,22 @@ public class QueryTestRecordServlet extends HttpServlet {
 		PrintWriter out=response.getWriter();
 		try 
 		{
-			queryStr=TRService.generateSQL(request);
-			result=TRService.searchData(queryStr);
+			String searchMode=dealQS.getQueryParameter(request.getQueryString(), "searchMode");
+			switch (searchMode) {
+				case "ProductInfo":
+					ITService=TRService;
+					break;
+				case "Log":
+					ITService=TLService;
+				break;
+				case "TestCount":
+					ITService=TCService;
+				break;
+				default:
+					break;
+			}
+			queryStr=ITService.generateSQL(request);
+			result=ITService.searchData(queryStr);
 			response.setStatus(200);
 			out.println(result.toString());
 		}
