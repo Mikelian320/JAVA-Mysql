@@ -47,13 +47,12 @@ public class TestCountServiceImpl implements ISearchService {
 			//String select=selectStr;
 			List<String> tables=dealQS.getTables(searchCon);
 			String condition=dealQS.getWhereCondition(searchCon);
-			String limit=dealQS.getLimitCondition(searchCon);
 			if(tables.size()==1) 
 			{
 				if(!condition.isEmpty()) {
-					SQLString="SELECT sql_calc_found_rows SN FROM "+tables.get(0)+" WHERE "+condition+" ORDER BY Record_Time DESC "+limit;
+					SQLString="SELECT sql_calc_found_rows Slot,Record_Time,PC_Name FROM "+tables.get(0)+" WHERE "+condition;
 				}else {
-					SQLString="SELECT sql_calc_found_rows SN FROM "+tables.get(0)+" ORDER BY Record_Time DESC "+limit;
+					SQLString="SELECT sql_calc_found_rows Slot,Record_Time,PC_Name FROM "+tables.get(0);
 				}
 
 			}else {
@@ -62,9 +61,9 @@ public class TestCountServiceImpl implements ISearchService {
 					if(!SQLString.isEmpty()) 
 					{
                         SQLString+=" UNION ";
-                        selectStr="SELECT SN";
+                        selectStr="SELECT Slot,Record_Time,PC_Name";
 					}else{
-                        selectStr="SELECT sql_calc_found_rows SN";
+                        selectStr="SELECT sql_calc_found_rows Slot,Record_Time,PC_Name";
                     }
 					if(!condition.isEmpty()) {
 						SQLString+=selectStr+" FROM "+table+" WHERE "+condition;
@@ -72,9 +71,6 @@ public class TestCountServiceImpl implements ISearchService {
 						SQLString+=selectStr+" FROM "+table;
 					}
 				}
-				//非查询LOG时增加按时间降序排列，如果查询LOG不进行排列（由于时间为查询条件在UNION语句下会报错）
-				SQLString+=" ORDER BY Record_Time DESC "+limit;
-
 			}
 		}catch(Exception e) {
 			throw e;

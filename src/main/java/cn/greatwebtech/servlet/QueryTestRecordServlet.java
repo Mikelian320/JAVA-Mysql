@@ -73,7 +73,8 @@ public class QueryTestRecordServlet extends HttpServlet {
 					ITService=TCService;
 				break;
 				default:
-					break;
+					throw new Exception("No "+searchMode+" Available");
+					//break;
 			}
 			queryStr=ITService.generateSQL(request);
 			result=ITService.searchData(queryStr);

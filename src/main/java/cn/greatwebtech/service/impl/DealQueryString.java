@@ -38,6 +38,7 @@ public class DealQueryString {
 					switch(key) 
 					{
 						case "Slot":
+						case "PC_Name":
 							value=value.replace("+", " ");
 							break;
 						case "Test_Station":
@@ -53,7 +54,6 @@ public class DealQueryString {
 						case "SN":
 						case "Product_Model":
 						case "TestResult":
-						case "PC_Name":
 						case "Product_Type":
 						case "Limit":
 						case "Offset":
