@@ -2,7 +2,9 @@
   <div class="container">
     <div class="left-box">
       <searchForm />
+      <p class="find-result">查询到 <span style="color: #409EFF">{{total}}</span> 条数据</p>
       <el-table
+        ref="table"
         border
         :data="tableData"
         :key="tableKey"
@@ -28,6 +30,7 @@
         </el-table-column>
       </el-table>
         <el-pagination
+          :total="total"
           :page-size="pagination.limit"
           :page-sizes="[50, 100, 200]"
           :current-page="pagination.page"
@@ -95,7 +98,7 @@ export default {
       return;
     }
     if (LOAD_DATA_ENTER_PAGE) {
-      this.searchData();
+      this.searchData(true);
     }
   },
   directives: {
@@ -127,6 +130,7 @@ export default {
       },
       selectedRow: undefined,
       pagination: initPaginationInfo,
+      total: 0,
       searchParams: {},
       tableKey: new Date().valueOf(),
     };
@@ -174,9 +178,19 @@ export default {
       });
       this.searchParams = newParams;
       this.tableKey = new Date().valueOf();
-      this.searchData();
+      this.searchData(true);
     },
-    async searchData() {
+    async getTotal() {
+      const res = await axios.get(`${SEARCH_ORIGIN}searchdata`, {
+        params: {
+          searchMode: 'TestCount',
+          ...this.searchParams,
+        },
+      });
+      const [[total]] = res.data;
+      this.total = +total;
+    },
+    async searchData(searchWithTotal) {
       if (this.loading) {
         this.$message('正在查询中');
         return;
@@ -184,6 +198,9 @@ export default {
       this.loading = true;
       try {
         const { limit, page } = this.pagination;
+        if (searchWithTotal) {
+          this.getTotal();
+        }
         const res = await axios.get(`${SEARCH_ORIGIN}searchdata`, {
           params: {
             searchMode: 'ProductInfo',
@@ -256,6 +273,7 @@ export default {
         page,
       });
       this.searchData();
+      this.$refs.table.bodyWrapper.scrollTop = 0;
     },
     pageSizeChange(size) {
       this.setPagination({
@@ -263,6 +281,7 @@ export default {
         limit: size,
       });
       this.searchData();
+      this.$refs.table.bodyWrapper.scrollTop = 0;
     },
   },
   components: {
@@ -271,6 +290,10 @@ export default {
 };
 </script>
 <style scoped>
+
+.find-result {
+  text-align: left;
+}
 .container {
   display: flex;
 }
