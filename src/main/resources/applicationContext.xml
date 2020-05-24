@@ -33,6 +33,14 @@
 		<property name="testDB" ref="TestCountDAO"></property>
 		<property name="dealQS" ref="DealQueryString"></property>
 	</bean>
+	<bean id="TestCount2Service" class="cn.greatwebtech.service.impl.TestCount2ServiceImpl">
+		<property name="testDB" ref="TestRecordDAO"></property>
+		<property name="dealQS" ref="DealQueryString"></property>
+	</bean>
+	<bean id="PackageTestLogs" class="cn.greatwebtech.service.impl.PackageTestLogs">
+		<property name="testDB" ref="TestRecordDAO"></property>
+		<property name="dealQS" ref="DealQueryString"></property>
+	</bean>
 	<bean id="LogFormatter" class="cn.greatwebtech.logger.LogFormatter"></bean>
 	<bean id="LogQueryStr" class="cn.greatwebtech.logger.LogQueryStr">
 		<property name="logFormatter" ref="LogFormatter"></property>
