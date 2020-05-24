@@ -173,8 +173,11 @@ public class TestRecordServiceImplTest {
 			request.setQueryString("searchMode=TestCount&Offset=0&Limit=50&Product_Model=S5750-24GT8SFP-P&Product_Type=ml_switch&Test_Require=以管理板为主");
 			//TCService.generateSQL(request);
 			System.out.println("SQL语句："+TCService.generateSQL(request));
+			long startTime= System.currentTimeMillis();
 			JSONArray result=TCService.searchData(TCService.generateSQL(request));
+			long endTime =System.currentTimeMillis();
 			System.out.println("返回结果："+result.toString());
+			System.out.printf("查询时间：%dms\n", (endTime-startTime));
 			assertTrue("查询测试记录失败，查询结果集为空", !result.isEmpty());
 			assertTrue("返回值异常", result.size()==1);
 		}catch(Exception e){
@@ -191,8 +194,11 @@ public class TestRecordServiceImplTest {
 			request.setQueryString("searchMode=TestCount&Offset=0&Limit=50&Product_Model=S5750-24GT8SFP-P&Product_Type=ml_switch&Test_Require=以管理板为主&Test_Station=总检");
 			//TCService.generateSQL(request);
 			System.out.println("SQL语句："+TCService.generateSQL(request));
+			long startTime= System.currentTimeMillis();
 			JSONArray result=TCService.searchData(TCService.generateSQL(request));
+			long endTime =System.currentTimeMillis();
 			System.out.println("返回结果："+result.toString());
+			System.out.printf("查询时间：%dms\n", (endTime-startTime));
 			assertTrue("查询测试记录失败，查询结果集为空", !result.isEmpty());
 			assertTrue("返回值异常", result.size()==1);
 		}catch(Exception e){
@@ -210,8 +216,11 @@ public class TestRecordServiceImplTest {
 			request.setQueryString("searchMode=TestCount&SN=G1N408A000560&PC_Name=BFEBFBFF000506E3_CELL+3&Record_Time=1557571812000&Slot=Chassis");
 			//TCService.generateSQL(request);
 			System.out.println("SQL语句："+TCService.generateSQL(request));
+			long startTime= System.currentTimeMillis();
 			JSONArray result=TCService.searchData(TCService.generateSQL(request));
+			long endTime =System.currentTimeMillis();
 			System.out.println("返回结果："+result.toString());
+			System.out.printf("查询时间：%dms\n", (endTime-startTime));
 			assertTrue("查询测试记录失败，查询结果集为空", !result.isEmpty());
 			assertTrue("返回值异常", result.size()==1);
 		}catch(Exception e){
@@ -225,10 +234,34 @@ public class TestRecordServiceImplTest {
 		//searchMode=TestCount&SN=G1N408A000560&PC_Name=BFEBFBFF000506E3_CELL+3&Record_Time=1557571812000&Slot=Chassis
 		try {
 			System.out.println("===================查询测试记录总数4=================");
-			request.setQueryString("searchMode=TestCount&SsearchMode=TestCount&Offset=0&Limit=50&SN=1234567890123");
+			request.setQueryString("searchMode=TestCount&Offset=0&Limit=50&SN=1234567890123");
 			//TCService.generateSQL(request);
 			System.out.println("SQL语句："+TCService.generateSQL(request));
+			long startTime= System.currentTimeMillis();
 			JSONArray result=TCService.searchData(TCService.generateSQL(request));
+			long endTime =System.currentTimeMillis();
+			System.out.printf("查询时间：%dms\n", (endTime-startTime));
+			System.out.println("返回结果："+result.toString());
+			assertTrue("查询测试记录失败，查询结果集为空", !result.isEmpty());
+			assertTrue("返回值异常", result.size()==1);
+		}catch(Exception e){
+			assertTrue("查询测试记录失败，异常信息:"+e.getMessage(), false);
+			//System.out.println(e.getMessage());
+		}
+	}
+	@Test
+	public void testCount5()
+	{
+		//searchMode=TestCount&SN=G1N408A000560&PC_Name=BFEBFBFF000506E3_CELL+3&Record_Time=1557571812000&Slot=Chassis
+		try {
+			System.out.println("===================查询测试记录总数5=================");
+			request.setQueryString("searchMode=TestCount");
+			//TCService.generateSQL(request);
+			System.out.println("SQL语句："+TCService.generateSQL(request));
+			long startTime= System.currentTimeMillis();
+			JSONArray result=TCService.searchData(TCService.generateSQL(request));
+			long endTime =System.currentTimeMillis();
+			System.out.printf("查询时间：%dms\n", (endTime-startTime));
 			System.out.println("返回结果："+result.toString());
 			assertTrue("查询测试记录失败，查询结果集为空", !result.isEmpty());
 			assertTrue("返回值异常", result.size()==1);
