@@ -6,6 +6,12 @@ pipeline {
     }
   }
   stages {
+      stage('ShowDate') {
+      steps {
+        sh 'date'
+      }
+   }
+
     stage('Compile') {
       steps {
         sh 'mvn assembly:assembly'
