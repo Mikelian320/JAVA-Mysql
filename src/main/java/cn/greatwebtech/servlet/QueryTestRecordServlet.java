@@ -14,7 +14,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import cn.greatwebtech.service.ISearchService;
 import cn.greatwebtech.service.impl.DealQueryString;
-import cn.greatwebtech.service.impl.TestCountServiceImpl;
+import cn.greatwebtech.service.impl.SelectCountServiceImpl;
 import cn.greatwebtech.service.impl.TestLogServiceImpl;
 import cn.greatwebtech.service.impl.TestRecordServiceImpl;
 import net.sf.json.JSONArray;
@@ -28,7 +28,7 @@ public class QueryTestRecordServlet extends HttpServlet {
 	private DealQueryString dealQS =new DealQueryString();
 	private TestRecordServiceImpl TRService;
 	private TestLogServiceImpl TLService;
-	private TestCountServiceImpl TCService;
+	private SelectCountServiceImpl TCService;
 	private ISearchService ITService;
     
 	@Override
@@ -37,7 +37,7 @@ public class QueryTestRecordServlet extends HttpServlet {
 		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 		TRService=(TestRecordServiceImpl)context.getBean("TestRecordService");
 		TLService=(TestLogServiceImpl)context.getBean("TestLogService");
-		TCService=(TestCountServiceImpl)context.getBean("TestCountService");
+		TCService=(SelectCountServiceImpl)context.getBean("SelectCountService");
 		
 	}
 	

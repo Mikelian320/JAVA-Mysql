@@ -60,14 +60,13 @@ public class TestRecordServiceImpl implements ISearchService{
 			}else {
 				for(String table:tables) 
 				{
-					if(SQLString!="") 
+					if(!SQLString.isEmpty()) 
 					{
 						SQLString+=" UNION ";
 					}
+					SQLString+=selectStr+" FROM "+table;
 					if(!condition.isEmpty()) {
-						SQLString+=selectStr+" FROM "+table+" WHERE "+condition;
-					}else {
-						SQLString+=selectStr+" FROM "+table;
+						SQLString+=" WHERE "+condition;
 					}
 				}
 				//非查询LOG时增加按时间降序排列，如果查询LOG不进行排列（由于时间为查询条件在UNION语句下会报错）

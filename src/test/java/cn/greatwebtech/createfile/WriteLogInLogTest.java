@@ -2,7 +2,7 @@ package cn.greatwebtech.createfile;
 
 import static org.junit.Assert.*;
 
-import com.mysql.jdbc.PingTarget;
+
 
 import org.junit.*;
 import org.springframework.context.ApplicationContext;
@@ -31,7 +31,7 @@ public class WriteLogInLogTest {
     @Test
 	public void writeSingleLog() 
 	{
-		System.out.println("===========在本地存储单个===============");
+		System.out.println("===========在本地存储单个测试日志===============");
 		request.setQueryString("searchMode=ProductInfo&Offset=0&Limit=50&SN=G1N40PP00214C&Product_Type=ml_switch&Test_Station=总检");
 		try {
             String SQL=PackService.generateSQL(request);
@@ -46,7 +46,7 @@ public class WriteLogInLogTest {
     @Test
 	public void writeMultiLog1() 
 	{
-		System.out.println("===========测试带表格SQL语句===============");
+		System.out.println("===========在本地存储多个测试日志1==============");
 		request.setQueryString("searchMode=ProductInfo&Offset=0&Limit=50&SN=1234567890123&Product_Type=ml_switch&Test_Station=总检");
 		try {
             String SQL=PackService.generateSQL(request);
@@ -62,7 +62,7 @@ public class WriteLogInLogTest {
     @Test
 	public void writeMultiLog2() 
 	{
-		System.out.println("===========测试带表格SQL语句===============");
+		System.out.println("===========在本地存储多个测试日志2===============");
 		request.setQueryString("searchMode=ProductInfo&Offset=0&Limit=50&SN=1234567890123&Product_Type=ml_switch");
 		try {
             String SQL=PackService.generateSQL(request);
@@ -74,16 +74,5 @@ public class WriteLogInLogTest {
 		}catch(Exception e) {
 			System.out.print(e.getMessage());
 		}
-    }
-    @Test
-    public void writeTest() throws Exception
-    {
-        try {
-            wLocal.writeDataInLocal("test2.txt","adadfjalkdfaslf");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            //TODO: handle exception
-        }
-       
     }
 }

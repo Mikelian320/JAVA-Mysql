@@ -12,13 +12,13 @@ public class TestCountServiceImplTest {
     ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
     MockHttpServletRequest request= new MockHttpServletRequest();
     TestCountServiceImpl TCService=null;
-    TestCount2ServiceImpl TC2Service=null;
+    SelectCountServiceImpl TC2Service=null;
     @Before
 	public void init() 
 	{
 		request.setCharacterEncoding("UTF-8");
         TCService=(TestCountServiceImpl)context.getBean("TestCountService");
-        TC2Service=(TestCount2ServiceImpl)context.getBean("TestCount2Service");
+        TC2Service=(SelectCountServiceImpl)context.getBean("SelectCountService");
 	}
     @Test
 	public void testCountSql_Calc_Found_Rows1()

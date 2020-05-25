@@ -56,7 +56,7 @@ public class TestLogServiceImpl implements ISearchService{
 			}else {
 				for(String table:tables) 
 				{
-					if(SQLString!="") 
+					if(!SQLString.isEmpty()) 
 					{
 						SQLString+=" UNION ";
 					}

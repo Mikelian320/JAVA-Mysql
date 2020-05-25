@@ -20,7 +20,8 @@ public class PackageTestLogs implements ISearchService{
     private TestRecordDaoImpl testDB;
 	private DealQueryString dealQS;
     private final String selectStr="SELECT Product_Model,Test_Station,Test_Require,SN,MAC,TestResult,Record_Time,Log";
-    private File file=null;
+	private File file=null;
+	private String filePath=null;
 	public void setTestDB(TestRecordDaoImpl testDB) {
 		this.testDB = testDB;
 	}
@@ -29,7 +30,7 @@ public class PackageTestLogs implements ISearchService{
     }
     public PackageTestLogs()
     {
-        this.file=createDirectory();
+		this.filePath=System.getProperty("user.dir")+"/"+getTime("yyyy-MM-dd-HH-mm-ss");
     }
 	@Override
 	public JSONArray searchData(String queryString)throws Exception {
@@ -95,9 +96,8 @@ public class PackageTestLogs implements ISearchService{
         String currentTime=dateFormat.format(new Date());
         return currentTime;
     }
-    public File createDirectory()
+    public File createDirectory(String filePath)
     {
-        String filePath=System.getProperty("user.dir")+"/"+getTime("yyyy-MM-dd-HH-mm-ss");
         File file = new File(filePath);
         if (!file.exists()) {
             file.mkdir();
@@ -108,8 +108,10 @@ public class PackageTestLogs implements ISearchService{
     {
 		//SELECT Product_Model,Test_Station,Test_Require,SN,MAC,TestResult,Record_Time,Log
 		//2018-10-08 17:52:43
+		
         try {
-            WriteLogInLocal writeLog= new WriteLogInLocal(file.getPath());
+			createDirectory(filePath);
+            WriteLogInLocal writeLog= new WriteLogInLocal(filePath);
             for (Object result : searchData) {
                 JSONArray testResult= (JSONArray)result;
                 String fileName=String.format("%s_%s_%s_%s_%s_%s_%s.txt", testResult.get(0),testResult.get(1),testResult.get(2), testResult.get(3),testResult.get(4),testResult.get(5),testResult.get(6).toString().replace(' ', '_').replace(':', '_'));

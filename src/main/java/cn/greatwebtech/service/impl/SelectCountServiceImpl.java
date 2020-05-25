@@ -10,7 +10,7 @@ import cn.greatwebtech.service.ISearchService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-public class TestCount2ServiceImpl implements ISearchService {
+public class SelectCountServiceImpl implements ISearchService {
     private TestRecordDaoImpl testDB;
 	private DealQueryString dealQS;
 	//private final String selectStr="SELECT sql_calc_found_rows SN";
@@ -50,20 +50,15 @@ public class TestCount2ServiceImpl implements ISearchService {
 			String condition=dealQS.getWhereCondition(searchCon);
 			if(tables.size()==1) 
 			{
+				SQLString="SELECT COUNT(*) FROM "+tables.get(0);
 				if(!condition.isEmpty()) {
-					SQLString="SELECT COUNT(*) FROM "+tables.get(0)+" WHERE "+condition;
-				}else {
-					SQLString="SELECT COUNT(*) FROM "+tables.get(0);
+					SQLString+=" WHERE "+condition;
 				}
-
 			}else {
 				//for(String table:tables) 
 				for(int i=0;i<tables.size();i++)
 				{
 					//selectStr="SELECT sql_calc_found_rows Slot,Record_Time,PC_Name";
-					if(!SQLString.isEmpty()){
-
-					}
 					if(!condition.isEmpty()) {
 						SQLString+="(SELECT COUNT(*) FROM "+tables.get(i)+" WHERE "+condition+")";
 					}else {

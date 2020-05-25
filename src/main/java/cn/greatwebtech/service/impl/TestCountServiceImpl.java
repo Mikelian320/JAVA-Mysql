@@ -49,10 +49,9 @@ public class TestCountServiceImpl implements ISearchService {
 			String condition=dealQS.getWhereCondition(searchCon);
 			if(tables.size()==1) 
 			{
+				SQLString="SELECT sql_calc_found_rows Slot,Record_Time,PC_Name FROM "+tables.get(0);
 				if(!condition.isEmpty()) {
-					SQLString="SELECT sql_calc_found_rows Slot,Record_Time,PC_Name FROM "+tables.get(0)+" WHERE "+condition;
-				}else {
-					SQLString="SELECT sql_calc_found_rows Slot,Record_Time,PC_Name FROM "+tables.get(0);
+					SQLString+=" WHERE "+condition;
 				}
 
 			}else {

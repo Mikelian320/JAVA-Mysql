@@ -33,7 +33,7 @@
 		<property name="testDB" ref="TestCountDAO"></property>
 		<property name="dealQS" ref="DealQueryString"></property>
 	</bean>
-	<bean id="TestCount2Service" class="cn.greatwebtech.service.impl.TestCount2ServiceImpl">
+	<bean id="SelectCountService" class="cn.greatwebtech.service.impl.SelectCountServiceImpl">
 		<property name="testDB" ref="TestRecordDAO"></property>
 		<property name="dealQS" ref="DealQueryString"></property>
 	</bean>
