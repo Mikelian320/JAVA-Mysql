@@ -132,7 +132,7 @@ public class TestRecordServiceImplTest {
 		}
 	}
 
-	@Test
+/* 	@Test
 	public void testSearchLog2()
 	{
 		//http://table.greatwebtech.cn/search/searchdata?searchMode=Log&SN=G1N408A000560&PC_Name=BFEBFBFF000506E3_CELL+3&Record_Time=1557571812000&Slot=Chassis
@@ -147,7 +147,7 @@ public class TestRecordServiceImplTest {
 			//System.out.println(e.getMessage());
 			assertTrue("查询LOG测试失败，异常信息:"+e.getMessage(), false);
 		}
-	}
+	} */
 
 	@Test
 	public void testSearchByTesrRequire()
