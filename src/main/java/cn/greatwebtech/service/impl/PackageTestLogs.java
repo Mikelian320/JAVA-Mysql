@@ -1,6 +1,7 @@
 package cn.greatwebtech.service.impl;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +28,10 @@ public class PackageTestLogs implements ISearchService{
 	}
 	public void setDealQS(DealQueryString dealQS) {
 		this.dealQS = dealQS;
-    }
+	}
+	public String getFilePath(){
+		return this.filePath;
+	}
     public PackageTestLogs()
     {
 		this.filePath=System.getProperty("user.dir")+"/"+getTime("yyyy-MM-dd-HH-mm-ss");
@@ -115,8 +119,11 @@ public class PackageTestLogs implements ISearchService{
             for (Object result : searchData) {
                 JSONArray testResult= (JSONArray)result;
                 String fileName=String.format("%s_%s_%s_%s_%s_%s_%s.txt", testResult.get(0),testResult.get(1),testResult.get(2), testResult.get(3),testResult.get(4),testResult.get(5),testResult.get(6).toString().replace(' ', '_').replace(':', '_'));
-                writeLog.writeDataInLocal(fileName, testResult.getString(7));
-            }
+                writeLog.writeDataInLocal(fileName, testResult.getString(7),false);
+			}
+			FileOutputStream fos1 = new FileOutputStream(new File(filePath+"TestLog.zip"));
+			writeLog.compressToZip(filePath, fos1, true);
+			writeLog.deleteDirAndFile(filePath);
         } catch (Exception e) {
             throw e;
             //TODO: handle exception
