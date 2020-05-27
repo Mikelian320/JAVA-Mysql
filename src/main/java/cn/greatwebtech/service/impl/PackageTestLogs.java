@@ -2,6 +2,7 @@ package cn.greatwebtech.service.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +24,8 @@ public class PackageTestLogs implements ISearchService{
     private final String selectStr="SELECT Product_Model,Test_Station,Test_Require,SN,MAC,TestResult,Record_Time,Log";
 	private File file=null;
 	private String filePath=null;
+	private String fileName=null;
+	WriteLogInLocal writeLog= null;
 	public void setTestDB(TestRecordDaoImpl testDB) {
 		this.testDB = testDB;
 	}
@@ -32,9 +35,15 @@ public class PackageTestLogs implements ISearchService{
 	public String getFilePath(){
 		return this.filePath;
 	}
+	public String getZipName(){
+		return this.fileName+"TestLog.zip";
+	}
     public PackageTestLogs()
     {
-		this.filePath=System.getProperty("user.dir")+"/"+getTime("yyyy-MM-dd-HH-mm-ss");
+		this.fileName=getTime("yyyy-MM-dd-HH-mm-ss");
+		this.filePath=System.getProperty("user.dir")+"/"+fileName;
+		this.writeLog=new WriteLogInLocal(filePath);
+		
     }
 	@Override
 	public JSONArray searchData(String queryString)throws Exception {
@@ -110,24 +119,35 @@ public class PackageTestLogs implements ISearchService{
     }
     public void writeLogsInLocal(JSONArray searchData) throws Exception
     {
-		//SELECT Product_Model,Test_Station,Test_Require,SN,MAC,TestResult,Record_Time,Log
-		//2018-10-08 17:52:43
-		
         try {
 			createDirectory(filePath);
-            WriteLogInLocal writeLog= new WriteLogInLocal(filePath);
             for (Object result : searchData) {
                 JSONArray testResult= (JSONArray)result;
                 String fileName=String.format("%s_%s_%s_%s_%s_%s_%s.txt", testResult.get(0),testResult.get(1),testResult.get(2), testResult.get(3),testResult.get(4),testResult.get(5),testResult.get(6).toString().replace(' ', '_').replace(':', '_'));
                 writeLog.writeDataInLocal(fileName, testResult.getString(7),false);
 			}
-			FileOutputStream fos1 = new FileOutputStream(new File(filePath+"TestLog.zip"));
-			writeLog.compressToZip(filePath, fos1, true);
-			writeLog.deleteDirAndFile(filePath);
         } catch (Exception e) {
             throw e;
             //TODO: handle exception
         }
+	}
 
-    }
+	public void deleteDirAndFile() throws Exception
+	{
+		try {
+			writeLog.deleteDirAndFile(filePath);
+		} catch (Exception e) {
+			throw e;
+			//TODO: handle exception
+		}
+	}
+	public void compressToZip(OutputStream out)throws RuntimeException
+	{
+		try {
+			writeLog.compressToZip(filePath, out, false);
+		} catch (Exception e) {
+			throw e;
+			//TODO: handle exception
+		}
+	}
 }
