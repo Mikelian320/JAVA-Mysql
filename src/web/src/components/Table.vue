@@ -2,7 +2,10 @@
   <div class="container">
     <div class="left-box">
       <searchForm />
-      <p class="find-result">查询到 <span style="color: #409EFF">{{total}}</span> 条数据</p>
+      <p class="find-result">
+        查询到 <span style="color: #409EFF">{{total}}</span> 条数据
+        <el-button @click="handleDownloadPage">下载本页日志</el-button>
+      </p>
       <el-table
         ref="table"
         border
@@ -287,6 +290,21 @@ export default {
       });
       this.searchData();
       this.$refs.table.bodyWrapper.scrollTop = 0;
+    },
+    async handleDownloadPage() {
+      try {
+        const { limit, page } = this.pagination;
+        await axios.get(`${SEARCH_ORIGIN}searchdata`, {
+          params: {
+            searchMode: 'PackageTestLogs',
+            Offset: (page - 1) * limit,
+            Limit: limit,
+            ...this.searchParams,
+          },
+        });
+      } catch (error) {
+        this.$message.error('数据出错了~');
+      }
     },
   },
   components: {
