@@ -22,9 +22,8 @@ public class PackageTestLogs implements ISearchService{
     private TestRecordDaoImpl testDB;
 	private DealQueryString dealQS;
     private final String selectStr="SELECT Product_Model,Test_Station,Test_Require,SN,MAC,TestResult,Record_Time,Log";
-	private File file=null;
-	private String filePath=null;
-	private String fileName=null;
+	private String dirPath=null;
+	private String dirName=null;
 	WriteLogInLocal writeLog= null;
 	public void setTestDB(TestRecordDaoImpl testDB) {
 		this.testDB = testDB;
@@ -33,17 +32,14 @@ public class PackageTestLogs implements ISearchService{
 		this.dealQS = dealQS;
 	}
 	public String getFilePath(){
-		return this.filePath;
+		return this.dirPath;
 	}
 	public String getZipName(){
-		return this.fileName+"TestLog.zip";
+		return this.dirName+"TestLog.zip";
 	}
     public PackageTestLogs()
     {
-		this.fileName=getTime("yyyy-MM-dd-HH-mm-ss");
-		this.filePath=System.getProperty("user.dir")+"/"+fileName;
-		this.writeLog=new WriteLogInLocal(filePath);
-		
+		this.writeLog=new WriteLogInLocal();
     }
 	@Override
 	public JSONArray searchData(String queryString)throws Exception {
@@ -108,23 +104,27 @@ public class PackageTestLogs implements ISearchService{
         SimpleDateFormat dateFormat=new SimpleDateFormat(format);
         String currentTime=dateFormat.format(new Date());
         return currentTime;
-    }
-    public File createDirectory(String filePath)
+	}
+	
+	private File createDirectory()
     {
-        File file = new File(filePath);
+		this.dirName=getTime("yyyy-MM-dd-HH-mm-ss");
+		this.dirPath=System.getProperty("user.dir")+"/"+dirName;
+        File file = new File(this.dirPath);
         if (!file.exists()) {
             file.mkdir();
         }
         return file;
-    }
+	}
+	
     public void writeLogsInLocal(JSONArray searchData) throws Exception
     {
         try {
-			createDirectory(filePath);
+			createDirectory();
             for (Object result : searchData) {
                 JSONArray testResult= (JSONArray)result;
                 String fileName=String.format("%s_%s_%s_%s_%s_%s_%s.txt", testResult.get(0),testResult.get(1),testResult.get(2), testResult.get(3),testResult.get(4),testResult.get(5),testResult.get(6).toString().replace(' ', '_').replace(':', '_'));
-                writeLog.writeDataInLocal(fileName, testResult.getString(7),false);
+                writeLog.writeDataInLocal(dirPath,fileName, testResult.getString(7),false);
 			}
         } catch (Exception e) {
             throw e;
@@ -135,7 +135,7 @@ public class PackageTestLogs implements ISearchService{
 	public void deleteDirAndFile() throws Exception
 	{
 		try {
-			writeLog.deleteDirAndFile(filePath);
+			writeLog.deleteDirAndFile(dirPath);
 		} catch (Exception e) {
 			throw e;
 			//TODO: handle exception
@@ -144,7 +144,7 @@ public class PackageTestLogs implements ISearchService{
 	public void compressToZip(OutputStream out)throws RuntimeException
 	{
 		try {
-			writeLog.compressToZip(filePath, out, false);
+			writeLog.compressToZip(dirPath, out, false);
 		} catch (Exception e) {
 			throw e;
 			//TODO: handle exception

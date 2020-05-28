@@ -26,7 +26,7 @@ public class WriteLogInLogTest {
 	{
 		request.setCharacterEncoding("UTF-8");
         PackService=(PackageTestLogs)context.getBean("PackageTestLogs");
-        wLocal=new WriteLogInLocal("D:/aaa/");
+        wLocal=new WriteLogInLocal();
 
     }
     @Test
@@ -68,7 +68,7 @@ public class WriteLogInLogTest {
 		try {
             String SQL=PackService.generateSQL(request);
             JSONArray result=PackService.searchData(SQL);
-            System.out.println(result.size());
+            //System.out.println(result.size());
 			PackService.writeLogsInLocal(result);
 			FileOutputStream fos1 = new FileOutputStream(new File(PackService.getFilePath()+"TestLog.zip"));
 			PackService.compressToZip(fos1);

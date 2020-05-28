@@ -88,11 +88,11 @@ public class QueryTestRecordServlet extends HttpServlet {
 				out.println(result.toString());
 			}else{
 				//response.setContentType("application/zip");
-				response.reset(); // 重点突出
-      			response.setCharacterEncoding("UTF-8"); // 重点突出
-				response.setContentType("application/x-msdownload");// 不同类型的文件对应不同的MIME类型 // 重点突出
-				response.setHeader("Content-Disposition", "attachment; filename="+PackService.getZipName());  
 				PackService.writeLogsInLocal(result);
+				response.reset(); 
+				response.setCharacterEncoding("UTF-8");
+			  	response.setContentType("application/x-msdownload");
+				response.setHeader("Content-Disposition", "attachment; filename="+PackService.getZipName());  
 				PackService.compressToZip(response.getOutputStream());
 				//response.setStatus(200);
 				PackService.deleteDirAndFile();

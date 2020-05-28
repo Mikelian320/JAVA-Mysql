@@ -5,13 +5,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 //Log的文件格式：RG-IS2712G_总检_以管理板为主_G1N40PP00268C_80058845DBC6_PASS_2019-05-20 10_59_15.0.txt
 public class WriteLogInLocal {
-    private String directoryPath;
     private static final int  BUFFER_SIZE = 2 * 1024;
-    public WriteLogInLocal(String directoryPath)
-    {
-        this.directoryPath=directoryPath;
-    }
-    public void writeDataInLocal(String fileName,String content,boolean utf) throws IOException
+
+    public void writeDataInLocal(String directoryPath,String fileName,String content,boolean utf) throws IOException
     {
         DataOutputStream out = new DataOutputStream(
             new BufferedOutputStream(
