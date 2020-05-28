@@ -14,6 +14,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import cn.greatwebtech.service.ISearchService;
 import cn.greatwebtech.service.impl.DealQueryString;
+import cn.greatwebtech.service.impl.PackageTestLogs;
 import cn.greatwebtech.service.impl.SelectCountServiceImpl;
 import cn.greatwebtech.service.impl.TestLogServiceImpl;
 import cn.greatwebtech.service.impl.TestRecordServiceImpl;
@@ -29,6 +30,7 @@ public class QueryTestRecordServlet extends HttpServlet {
 	private TestRecordServiceImpl TRService;
 	private TestLogServiceImpl TLService;
 	private SelectCountServiceImpl TCService;
+	private PackageTestLogs PackService;
 	private ISearchService ITService;
     
 	@Override
@@ -38,7 +40,7 @@ public class QueryTestRecordServlet extends HttpServlet {
 		TRService=(TestRecordServiceImpl)context.getBean("TestRecordService");
 		TLService=(TestLogServiceImpl)context.getBean("TestLogService");
 		TCService=(SelectCountServiceImpl)context.getBean("SelectCountService");
-		
+		PackService=(PackageTestLogs)context.getBean("PackageTestLogs");
 	}
 	
     /**
@@ -55,9 +57,6 @@ public class QueryTestRecordServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String queryStr="";
 		JSONArray result=new JSONArray();
-		response.setCharacterEncoding("utf-8");
-	    response.setContentType("text/javascript;charset=utf-8");
-	    response.setHeader("content-type", "application/json;charset=utf-8");
 		PrintWriter out=response.getWriter();
 		try 
 		{
@@ -72,14 +71,32 @@ public class QueryTestRecordServlet extends HttpServlet {
 				case "TestCount":
 					ITService=TCService;
 				break;
+				case "PackageTestLogs":
+					ITService=PackService;
+				break;
 				default:
 					throw new Exception("No "+searchMode+" Available");
 					//break;
 			}
 			queryStr=ITService.generateSQL(request);
 			result=ITService.searchData(queryStr);
-			response.setStatus(200);
-			out.println(result.toString());
+			if (!searchMode.equals("PackageTestLogs")) {
+				response.setCharacterEncoding("utf-8");
+				response.setContentType("text/javascript;charset=utf-8");
+				response.setHeader("content-type", "application/json;charset=utf-8");
+				response.setStatus(200);
+				out.println(result.toString());
+			}else{
+				//response.setContentType("application/zip");
+				PackService.writeLogsInLocal(result);
+				response.reset(); 
+				response.setCharacterEncoding("UTF-8");
+			  	response.setContentType("application/x-msdownload");
+				response.setHeader("Content-Disposition", "attachment; filename="+PackService.getZipName());  
+				PackService.compressToZip(response.getOutputStream());
+				//response.setStatus(200);
+				PackService.deleteDirAndFile();
+			}
 		}
 		catch(Exception e)
 		{
@@ -88,7 +105,7 @@ public class QueryTestRecordServlet extends HttpServlet {
 		}
 		finally 
 		{
-			
+			out.close();
 		}
 		
 		
