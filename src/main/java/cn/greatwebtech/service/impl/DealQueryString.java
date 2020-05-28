@@ -161,7 +161,7 @@ public class DealQueryString {
 			case "PC_Name":
 				break;
 			case "TestResult":
-				if(value.toUpperCase()!="PASS"||value.toUpperCase()!="FAIL") 
+				if(!value.toUpperCase().equals("PASS")&&!value.toUpperCase().equals("FAIL")) 
 				{
 					throw new Exception("TestResult is not PASS or FAIL");
 				}

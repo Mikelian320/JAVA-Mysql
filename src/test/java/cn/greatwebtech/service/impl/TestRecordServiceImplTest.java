@@ -153,7 +153,7 @@ public class TestRecordServiceImplTest {
 	public void testSearchByTesrRequire()
 	{
 		try {
-			System.out.println("===================查询测试记录=================");
+			System.out.println("===================按测试需求查询测试记录=================");
 			request.setQueryString("searchMode=ProductInfo&Offset=0&Limit=50&SN=G1N40PP00214C&Product_Type=ml_switch&Test_Require=以管理板为主&Test_Station=总检");
 			JSONArray result=TRService.searchData(TRService.generateSQL(request));
 			System.out.println(result.toString());
@@ -163,6 +163,35 @@ public class TestRecordServiceImplTest {
 			//System.out.println(e.getMessage());
 		}
 	}
+
+	@Test
+	public void testSearchByTestResultFail()
+	{
+		try {
+			System.out.println("===================按测试结果(FAIL)查询测试记录=================");
+			request.setQueryString("searchMode=ProductInfo&Offset=0&Limit=50&TestResult=FAIL");
+			JSONArray result=TRService.searchData(TRService.generateSQL(request));
+			assertTrue("查询测试记录失败，查询结果集为空", !result.isEmpty());
+		}catch(Exception e){
+			assertTrue("查询测试记录失败，异常信息:"+e.getMessage(), false);
+			//System.out.println(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testSearchByTestResultPass()
+	{
+		try {
+			System.out.println("===================按测试结果(PASS)查询测试记录=================");
+			request.setQueryString("searchMode=ProductInfo&Offset=0&Limit=50&TestResult=PASS");
+			JSONArray result=TRService.searchData(TRService.generateSQL(request));
+			assertTrue("查询测试记录失败，查询结果集为空", !result.isEmpty());
+		}catch(Exception e){
+			assertTrue("查询测试记录失败，异常信息:"+e.getMessage(), false);
+			//System.out.println(e.getMessage());
+		}
+	}
+
 
 	@Test
 	public void testCount1()
