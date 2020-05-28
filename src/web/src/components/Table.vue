@@ -180,7 +180,10 @@ export default {
       this.tableKey = new Date().valueOf();
       this.searchData(true);
     },
-    async getTotal() {
+    async getTotal(searchWithTotal) {
+      if (!searchWithTotal) {
+        return this.total;
+      }
       const res = await axios.get(`${SEARCH_ORIGIN}searchdata`, {
         params: {
           searchMode: 'TestCount',
@@ -188,7 +191,7 @@ export default {
         },
       });
       const [[total]] = res.data;
-      this.total = +total;
+      return +total;
     },
     async searchData(searchWithTotal) {
       if (this.loading) {
@@ -198,17 +201,18 @@ export default {
       this.loading = true;
       try {
         const { limit, page } = this.pagination;
-        if (searchWithTotal) {
-          this.getTotal();
-        }
-        const res = await axios.get(`${SEARCH_ORIGIN}searchdata`, {
-          params: {
-            searchMode: 'ProductInfo',
-            Offset: (page - 1) * limit,
-            Limit: limit,
-            ...this.searchParams,
-          },
-        });
+        const allRequest = [
+          axios.get(`${SEARCH_ORIGIN}searchdata`, {
+            params: {
+              searchMode: 'ProductInfo',
+              Offset: (page - 1) * limit,
+              Limit: limit,
+              ...this.searchParams,
+            },
+          }),
+          this.getTotal(searchWithTotal),
+        ];
+        const [res, total] = await Promise.all(allRequest);
         const data = res.data.map(item => ({
           slot: item[0],
           test_site: item[1],
@@ -226,6 +230,7 @@ export default {
           result: item[13],
         }));
         this.tableData = data;
+        this.total = total;
       } catch (error) {
         this.$message.error('数据出错了~');
       }
