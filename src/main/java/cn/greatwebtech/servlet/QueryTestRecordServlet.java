@@ -56,8 +56,8 @@ public class QueryTestRecordServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String queryStr="";
+		PrintWriter out=null;
 		JSONArray result=new JSONArray();
-		PrintWriter out=response.getWriter();
 		try 
 		{
 			String searchMode=dealQS.getQueryParameter(request.getQueryString(), "searchMode");
@@ -84,8 +84,10 @@ public class QueryTestRecordServlet extends HttpServlet {
 				response.setCharacterEncoding("utf-8");
 				response.setContentType("text/javascript;charset=utf-8");
 				response.setHeader("content-type", "application/json;charset=utf-8");
-				response.setStatus(200);
+				out=response.getWriter();
 				out.println(result.toString());
+				response.setStatus(200);
+				out.close();
 			}else{
 				//response.setContentType("application/zip");
 				PackService.writeLogsInLocal(result);
@@ -94,18 +96,18 @@ public class QueryTestRecordServlet extends HttpServlet {
 			  	response.setContentType("application/x-msdownload");
 				response.setHeader("Content-Disposition", "attachment; filename="+PackService.getZipName());  
 				PackService.compressToZip(response.getOutputStream());
-				//response.setStatus(200);
 				PackService.deleteDirAndFile();
 			}
 		}
 		catch(Exception e)
 		{
 			response.setStatus(500);
-			out.println("Error:"+e.toString());
+			response.sendError(500, e.getMessage());
+			//out.println("Error:"+e.toString());
 		}
 		finally 
 		{
-			out.close();
+			//out.close();
 		}
 		
 		
