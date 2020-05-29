@@ -81,7 +81,6 @@ import axios from 'axios';
 import { SEARCH_ORIGIN, LOAD_DATA_ENTER_PAGE } from '@/constants/config';
 import downloadData from '@/utils/downloadData';
 import elTableInfiniteScroll from 'el-table-infinite-scroll';
-import qs from 'querystring';
 import SearchForm from './SearchForm.vue';
 import checkLogin from '@/utils/checkLogin';
 
@@ -295,13 +294,14 @@ export default {
     async handleDownloadPage() {
       try {
         const { limit, page } = this.pagination;
-        const url = qs.stringify({
-          searchMode: 'PackageTestLogs',
-          Offset: (page - 1) * limit,
-          Limit: limit,
-          ...this.searchParams,
+        await axios.get(`${SEARCH_ORIGIN}searchdata`, {
+          params: {
+            searchMode: 'PackageTestLogs',
+            Offset: (page - 1) * limit,
+            Limit: limit,
+            ...this.searchParams,
+          },
         });
-        window.open(`${SEARCH_ORIGIN}searchdata?${url}`);
       } catch (error) {
         this.$message.error('数据出错了~');
       }
