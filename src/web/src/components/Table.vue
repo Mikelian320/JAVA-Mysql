@@ -4,7 +4,7 @@
       <searchForm />
       <p class="find-result">
         查询到 <span style="color: #409EFF">{{total}}</span> 条数据
-        <el-button @click="handleDownloadPage">下载本页日志</el-button>
+        <el-button @click="handleDownloadPage" :loading="downloadLoading">下载本页日志</el-button>
       </p>
       <el-table
         ref="table"
@@ -81,7 +81,7 @@ import axios from 'axios';
 import { SEARCH_ORIGIN, LOAD_DATA_ENTER_PAGE } from '@/constants/config';
 import downloadData from '@/utils/downloadData';
 import elTableInfiniteScroll from 'el-table-infinite-scroll';
-import qs from 'querystring';
+import moment from 'moment';
 import SearchForm from './SearchForm.vue';
 import checkLogin from '@/utils/checkLogin';
 
@@ -137,6 +137,7 @@ export default {
       total: 0,
       searchParams: {},
       tableKey: new Date().valueOf(),
+      downloadLoading: false,
     };
   },
   methods: {
@@ -293,17 +294,28 @@ export default {
       this.$refs.table.bodyWrapper.scrollTop = 0;
     },
     async handleDownloadPage() {
+      this.downloadLoading = true;
       try {
         const { limit, page } = this.pagination;
-        const url = qs.stringify({
-          searchMode: 'PackageTestLogs',
-          Offset: (page - 1) * limit,
-          Limit: limit,
-          ...this.searchParams,
+        const response = await axios.get(`${SEARCH_ORIGIN}searchdata`, {
+          params: {
+            searchMode: 'PackageTestLogs',
+            Offset: (page - 1) * limit,
+            Limit: limit,
+            ...this.searchParams,
+          },
         });
-        window.open(`${SEARCH_ORIGIN}searchdata?${url}`);
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.style.display = 'none';
+        link.href = url;
+        const date = moment().format('YYYY-MM-DD-hh-mm-ss');
+        link.setAttribute('download', `${date}TestLog.zip`);
+        link.click();
+        this.downloadLoading = false;
       } catch (error) {
         this.$message.error('数据出错了~');
+        this.downloadLoading = false;
       }
     },
   },
