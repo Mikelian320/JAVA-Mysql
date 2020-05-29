@@ -16,6 +16,7 @@
     "default-passive-events": "^1.0.10",
     "el-table-infinite-scroll": "^0.1.0",
     "element-ui": "^2.8.2",
+    "moment": "^2.26.0",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3"
   },
