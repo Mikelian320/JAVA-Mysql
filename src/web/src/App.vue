@@ -42,9 +42,9 @@ body {
 }
 
 #nav a.router-link-exact-active {
-  color: #42b983;
+  color: #409EFF;
 }
 #nav .username {
-  color: #42b983;
+  color: #409EFF;
 }
 </style>

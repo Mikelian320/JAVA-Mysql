@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import {
+  Pagination,
   Dropdown, DropdownMenu, DropdownItem,
   Collapse, CollapseItem,
   Table, TableColumn, Form, FormItem, Input, Button, Option, Select, Message, Loading,
@@ -16,6 +17,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 
 // elementUI
 
+Vue.use(Pagination);
 Vue.use(Table);
 Vue.use(TableColumn);
 Vue.use(Form);

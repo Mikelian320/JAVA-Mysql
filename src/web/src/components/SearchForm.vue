@@ -220,6 +220,7 @@ export default {
             Test_Require: testRequire,
             StartTime: start && start.valueOf(),
             EndTime: end && end.valueOf(),
+            TestResult: result,
           });
           return true;
         }
