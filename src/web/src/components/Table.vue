@@ -304,8 +304,9 @@ export default {
             Limit: limit,
             ...this.searchParams,
           },
+          responseType: 'blob',
         });
-        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const url = window.URL.createObjectURL(response.data);
         const link = document.createElement('a');
         link.style.display = 'none';
         link.href = url;
