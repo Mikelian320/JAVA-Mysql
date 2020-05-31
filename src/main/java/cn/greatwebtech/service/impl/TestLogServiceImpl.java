@@ -9,12 +9,10 @@ import cn.greatwebtech.service.ISearchService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-
-public class TestRecordServiceImpl implements ISearchService{
-
-	private TestRecordDaoImpl testDB;
+public class TestLogServiceImpl implements ISearchService{
+    private TestRecordDaoImpl testDB;
 	private DealQueryString dealQS;
-	private final String selectStr="SELECT Slot,Test_Station,Test_Require,Product_Model,SN,MAC,Record_Time,PC_Name,ATE_Version,Hardware_Version,Software_Version,Software_Number,Boot_Version,TestResult";
+	private final String selectStr="SELECT Log";
 	public void setTestDB(TestRecordDaoImpl testDB) {
 		this.testDB = testDB;
 	}
@@ -38,6 +36,7 @@ public class TestRecordServiceImpl implements ISearchService{
 	}
 	/*	 * use this method to generate SQL
 	 * */
+    @Override
 	public String generateSQL(HttpServletRequest request)throws Exception 
 	{
 		//boolean getLog=getQueryParameter(request.getQueryString(),"searchMode").contains("Log");
@@ -47,16 +46,13 @@ public class TestRecordServiceImpl implements ISearchService{
 			dealQS.validateSearchConditon(searchCon);
 			//String select=selectStr;
 			List<String> tables=dealQS.getTables(searchCon);
-			String condition=dealQS.getWhereCondition(searchCon);
-			String limit=dealQS.getLimitCondition(searchCon);
+            String condition=dealQS.getWhereCondition(searchCon);
+            if (condition.isEmpty()) {
+                throw new Exception("Search Log Condition Can't be None!");
+            }
 			if(tables.size()==1) 
 			{
-				if(!condition.isEmpty()) {
-					SQLString=selectStr+" FROM "+tables.get(0)+" WHERE "+condition+" ORDER BY Record_Time DESC "+limit;
-				}else {
-					SQLString=selectStr+" FROM "+tables.get(0)+" ORDER BY Record_Time DESC "+limit;
-				}
-
+				SQLString=selectStr+" FROM "+tables.get(0)+" WHERE "+condition;
 			}else {
 				for(String table:tables) 
 				{
@@ -64,18 +60,14 @@ public class TestRecordServiceImpl implements ISearchService{
 					{
 						SQLString+=" UNION ";
 					}
-					SQLString+=selectStr+" FROM "+table;
-					if(!condition.isEmpty()) {
-						SQLString+=" WHERE "+condition;
-					}
-				}
-				//非查询LOG时增加按时间降序排列，如果查询LOG不进行排列（由于时间为查询条件在UNION语句下会报错）
-				SQLString+=" ORDER BY Record_Time DESC "+limit;
+					SQLString+=selectStr+" FROM "+table+" WHERE "+condition;
 
+				}
 			}
 		}catch(Exception e) {
 			throw e;
 		}
 		return SQLString;
 	}
+    
 }
