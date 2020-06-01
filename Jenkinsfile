@@ -6,9 +6,9 @@ pipeline {
     }
   }
   stages {
-    stage('ShowDate') {
+    stage('showBranchName') {
       steps {
-        sh 'date'
+        sh 'echo ${BRANCH_NAME}'
       }
     }
 
@@ -20,13 +20,17 @@ pipeline {
 
     stage('Publish') {
       steps {
-        sh 'scp target/demo-0.0.1-SNAPSHOT.jar autojenkins@www.greatwebtech.cn:~/'
+        sh 'chmod 700 target/demo-0.0.1-SNAPSHOT.jar'
+        sh 'chmod 700 restartSpringBoot.sh'
+        sh 'ssh autojenkins@www.greatwebtech.cn "mkdir -p java/${BRANCH_NAME}"'
+        sh 'scp target/demo-0.0.1-SNAPSHOT.jar autojenkins@www.greatwebtech.cn:~/java/${BRANCH_NAME}'
+        sh 'scp restartSpringBoot.sh autojenkins@www.greatwebtech.cn:~/java/${BRANCH_NAME}'
       }
     }
 
     stage('Restart') {
       steps {
-        sh 'ssh autojenkins@www.greatwebtech.cn "./restartSpringBoot.sh demo-0.0.1-SNAPSHOT.jar"'
+        sh 'ssh autojenkins@www.greatwebtech.cn "./java/${BRANCH_NAME}/restartSpringBoot.sh ./java/${BRANCH_NAME}/demo-0.0.1-SNAPSHOT.jar ${BRANCH_NAME}"'
       }
     }
 
