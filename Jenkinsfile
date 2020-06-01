@@ -6,27 +6,27 @@ pipeline {
     }
   }
   stages {
-      stage('ShowDate') {
+    stage('ShowDate') {
       steps {
         sh 'date'
       }
-   }
+    }
 
     stage('Compile') {
       steps {
-        sh 'mvn assembly:assembly'
+        sh 'mvn package'
       }
     }
 
     stage('Publish') {
       steps {
-        sh 'scp target/Spring-web-search-jar-with-dependencies.jar autojenkins@www.greatwebtech.cn:~/'
+        sh 'scp target/demo-0.0.1-SNAPSHOT.jar autojenkins@www.greatwebtech.cn:~/'
       }
     }
 
     stage('Restart') {
       steps {
-        sh 'ssh autojenkins@www.greatwebtech.cn "./restartSearchMysql.sh Spring-web-search-jar-with-dependencies.jar"'
+        sh 'ssh autojenkins@www.greatwebtech.cn "./restartSpringBoot.sh demo-0.0.1-SNAPSHOT.jar"'
       }
     }
 
