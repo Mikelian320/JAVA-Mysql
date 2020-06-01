@@ -102,8 +102,7 @@ export default {
         this.$message.success('登陆成功');
         localStorage.setItem('username', username);
         localStorage.setItem('password', password);
-        // TODO fix push for production env.
-        this.$router.push('/table');
+        this.$router.push('/');
       } else {
         this.$message.error('登陆失败');
       }

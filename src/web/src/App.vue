@@ -1,10 +1,8 @@
 <template>
   <div id="app">
-    <nav id="nav" v-if="showNav">
+    <nav id="nav">
       <div v-if="username">Hello, <strong class="username">{{username}}</strong>!</div>
       <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link> |
-      <router-link to="/table">Table</router-link> |
       <router-link to="/login">Login</router-link>
     </nav>
     <router-view/>
@@ -12,12 +10,10 @@
 </template>
 
 <script>
-import { TYPE } from '@/constants/config';
 
 export default {
   data() {
     return {
-      showNav: TYPE !== 'only-search',
       username: localStorage.getItem('username'),
     };
   },
@@ -46,9 +42,9 @@ body {
 }
 
 #nav a.router-link-exact-active {
-  color: #42b983;
+  color: #409EFF;
 }
 #nav .username {
-  color: #42b983;
+  color: #409EFF;
 }
 </style>

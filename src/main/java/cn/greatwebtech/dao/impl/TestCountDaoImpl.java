@@ -8,9 +8,8 @@ import cn.greatwebtech.dao.ITestRecordDao;
 //import ITestRecordDao;
 import net.sf.json.JSONArray;
 
-
-public class TestRecordDaoImpl implements ITestRecordDao {
-	private AuthorityData  authorityData=null;
+public class TestCountDaoImpl implements ITestRecordDao{
+    private AuthorityData  authorityData=null;
 	
 
 	@Override
@@ -21,8 +20,9 @@ public class TestRecordDaoImpl implements ITestRecordDao {
 		try {
 			Class.forName(authorityData.driver);
 			conn = DriverManager.getConnection(authorityData.dburl, authorityData.user, authorityData.password);
-			stmt = conn.createStatement();
-			final ResultSet data = stmt.executeQuery(SQL);
+            stmt = conn.createStatement();
+            stmt.executeQuery(SQL);
+			final ResultSet data = stmt.executeQuery("select found_rows()");
 			final int columnCount = data.getMetaData().getColumnCount();
 			while (data.next()) {
 				final JSONArray singleDA = new JSONArray();
@@ -58,5 +58,5 @@ public class TestRecordDaoImpl implements ITestRecordDao {
 	public void setAuthorityData(AuthorityData authorityData) {
 		this.authorityData = authorityData;
 	}
-
+    
 }

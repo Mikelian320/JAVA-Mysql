@@ -2,7 +2,12 @@
   <div class="container">
     <div class="left-box">
       <searchForm />
+      <p class="find-result">
+        查询到 <span style="color: #409EFF">{{total}}</span> 条数据
+        <el-button @click="handleDownloadPage" :loading="downloadLoading">下载本页日志</el-button>
+      </p>
       <el-table
+        ref="table"
         border
         :data="tableData"
         :key="tableKey"
@@ -11,7 +16,6 @@
         v-loading="loading"
         element-loading-text="拼命加载中"
         @row-dblclick="handleClick"
-        v-el-table-infinite-scroll="load"
       >
         <el-table-column prop="slot" label="槽位"></el-table-column>
         <el-table-column prop="test_site" label="测试站点" width="120"></el-table-column>
@@ -28,6 +32,17 @@
           </template>
         </el-table-column>
       </el-table>
+        <el-pagination
+          :total="total"
+          :page-size="pagination.limit"
+          :page-sizes="[50, 100, 200]"
+          :current-page="pagination.page"
+          @current-change="pageChange"
+          @size-change="pageSizeChange"
+          background
+          layout="sizes, prev, pager, next"
+          >
+        </el-pagination>
     </div>
     <el-card class="box-card" v-loading="log.loading">
       <div slot="header">
@@ -66,13 +81,13 @@ import axios from 'axios';
 import { SEARCH_ORIGIN, LOAD_DATA_ENTER_PAGE } from '@/constants/config';
 import downloadData from '@/utils/downloadData';
 import elTableInfiniteScroll from 'el-table-infinite-scroll';
+import moment from 'moment';
 import SearchForm from './SearchForm.vue';
 import checkLogin from '@/utils/checkLogin';
 
 const initPaginationInfo = {
-  offset: 0,
+  page: 1,
   limit: 50,
-  noMore: false,
 };
 
 export default {
@@ -87,7 +102,7 @@ export default {
       return;
     }
     if (LOAD_DATA_ENTER_PAGE) {
-      this.searchData();
+      this.searchData(true);
     }
   },
   directives: {
@@ -119,30 +134,13 @@ export default {
       },
       selectedRow: undefined,
       pagination: initPaginationInfo,
+      total: 0,
       searchParams: {},
       tableKey: new Date().valueOf(),
+      downloadLoading: false,
     };
   },
   methods: {
-    load() {
-      if (this.tableData.length === 0) {
-        // 无数据时不加载数据，必须通过 search 触发一次后才能调用 load
-        return;
-      }
-      if (this.pagination.noMore) {
-        this.$message('无更多数据');
-        return;
-      }
-      if (!this.loading) {
-        this.pagination = {
-          offset: this.pagination.offset + this.pagination.limit,
-          limit: 10,
-        };
-        this.pagination.limit = 10;
-        this.searchData();
-        console.log('TODO: load more');
-      }
-    },
     handleCommand(command) {
       switch (command) {
         case 'download':
@@ -180,26 +178,46 @@ export default {
           }
         });
       }
-      this.pagination = initPaginationInfo;
+      this.setPagination({
+        page: 1,
+      });
       this.searchParams = newParams;
       this.tableKey = new Date().valueOf();
-      this.searchData();
+      this.searchData(true);
     },
-    async searchData() {
+    async getTotal(searchWithTotal) {
+      if (!searchWithTotal) {
+        return this.total;
+      }
+      const res = await axios.get(`${SEARCH_ORIGIN}searchdata`, {
+        params: {
+          searchMode: 'TestCount',
+          ...this.searchParams,
+        },
+      });
+      const [[total]] = res.data;
+      return +total;
+    },
+    async searchData(searchWithTotal) {
       if (this.loading) {
         this.$message('正在查询中');
         return;
       }
       this.loading = true;
       try {
-        const res = await axios.get(`${SEARCH_ORIGIN}searchdata`, {
-          params: {
-            searchMode: 'ProductInfo',
-            Offset: this.pagination.offset,
-            Limit: this.pagination.limit,
-            ...this.searchParams,
-          },
-        });
+        const { limit, page } = this.pagination;
+        const allRequest = [
+          axios.get(`${SEARCH_ORIGIN}searchdata`, {
+            params: {
+              searchMode: 'ProductInfo',
+              Offset: (page - 1) * limit,
+              Limit: limit,
+              ...this.searchParams,
+            },
+          }),
+          this.getTotal(searchWithTotal),
+        ];
+        const [res, total] = await Promise.all(allRequest);
         const data = res.data.map(item => ({
           slot: item[0],
           test_site: item[1],
@@ -216,16 +234,8 @@ export default {
           boot_version: item[12],
           result: item[13],
         }));
-        if (this.pagination.offset === 0) {
-          this.tableData = data;
-        } else {
-          this.tableData = this.tableData.concat(data);
-        }
-
-        if (data.length === 0) {
-          this.$message('无更多数据');
-          this.pagination.noMore = true;
-        }
+        this.tableData = data;
+        this.total = total;
       } catch (error) {
         this.$message.error('数据出错了~');
       }
@@ -262,6 +272,53 @@ export default {
         this.$message.error('数据出错了~');
       }
     },
+    setPagination(params) {
+      this.pagination = {
+        ...this.pagination,
+        ...params,
+      };
+    },
+    pageChange(page) {
+      this.setPagination({
+        page,
+      });
+      this.searchData();
+      this.$refs.table.bodyWrapper.scrollTop = 0;
+    },
+    pageSizeChange(size) {
+      this.setPagination({
+        page: 1,
+        limit: size,
+      });
+      this.searchData();
+      this.$refs.table.bodyWrapper.scrollTop = 0;
+    },
+    async handleDownloadPage() {
+      this.downloadLoading = true;
+      try {
+        const { limit, page } = this.pagination;
+        const response = await axios.get(`${SEARCH_ORIGIN}searchdata`, {
+          params: {
+            searchMode: 'PackageTestLogs',
+            Offset: (page - 1) * limit,
+            Limit: limit,
+            ...this.searchParams,
+          },
+          responseType: 'blob',
+        });
+        const url = window.URL.createObjectURL(response.data);
+        const link = document.createElement('a');
+        link.style.display = 'none';
+        link.href = url;
+        const date = moment().format('YYYY-MM-DD-hh-mm-ss');
+        link.setAttribute('download', `${date}TestLog.zip`);
+        link.click();
+        this.downloadLoading = false;
+      } catch (error) {
+        this.$message.error('数据出错了~');
+        this.downloadLoading = false;
+      }
+    },
   },
   components: {
     SearchForm,
@@ -269,6 +326,10 @@ export default {
 };
 </script>
 <style scoped>
+
+.find-result {
+  text-align: left;
+}
 .container {
   display: flex;
 }
