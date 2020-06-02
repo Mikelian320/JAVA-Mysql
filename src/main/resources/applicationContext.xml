@@ -41,6 +41,9 @@
 		<property name="testDB" ref="TestRecordDAO"></property>
 		<property name="dealQS" ref="DealQueryString"></property>
 	</bean>
+		<bean id="SumTestRecordService" class="cn.greatwebtech.service.impl.SumTestRecordImpl">
+		<property name="testDB" ref="TestRecordDAO"></property>
+	</bean>
 	<bean id="LogFormatter" class="cn.greatwebtech.logger.LogFormatter"></bean>
 	<bean id="LogQueryStr" class="cn.greatwebtech.logger.LogQueryStr">
 		<property name="logFormatter" ref="LogFormatter"></property>
