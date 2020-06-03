@@ -1,9 +1,10 @@
 <template>
   <div id="app">
     <nav id="nav">
-      <div v-if="username">Hello, <strong class="username">{{username}}</strong>!</div>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/login">Login</router-link>
+      <div v-if="username">你好, <strong class="username">{{username}}</strong>!</div>
+      <router-link to="/">首页</router-link> |
+      <router-link to="/statistics">汇总</router-link> |
+      <router-link to="/login">登陆</router-link>
     </nav>
     <router-view/>
   </div>
