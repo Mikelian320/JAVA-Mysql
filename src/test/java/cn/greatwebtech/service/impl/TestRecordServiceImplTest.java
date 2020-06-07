@@ -47,28 +47,6 @@ public class TestRecordServiceImplTest {
 	}
 	
 	@Test
-	public void testSQLWithoutTable() 
-	{
-		request.setQueryString("searchMode=ProductInfo&Offset=0&Limit=50&SN=G1N40PP00214C&Test_Station=总检");
-		/*request.setParameter("searchMode", "ProductInfo");
-		
-		request.setParameter("Product_Type", "ml_switch");
-		request.setParameter("StartTime", "1572437686000");
-		request.setParameter("EndTime", "1573820086000");
-		request.setParameter("Offset", "0");
-		request.setParameter("Limit", "50");
-		request.setParameter("SN", "G1N40PP002143");*/
-		try {
-			System.out.println("===========测试不带表格SQL语句============");
-			String SQL=TRService.generateSQL(request);
-			System.out.println(SQL);
-			assertTrue(SQL, SQL.equals(SqlWithoutTable));
-		}catch(Exception e) {
-			System.out.print(e.getMessage());
-		}
-		//System.out.print("TEST");
-	}
-	@Test
 	public void testSQLWithTable() 
 	{
 		System.out.println("===========测试带表格SQL语句===============");
