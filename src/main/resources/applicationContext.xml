@@ -10,7 +10,7 @@
 		<property name="dburl" value="jdbc:mysql://132.232.0.149:3306/zzblogo?zeroDateTimeBehavior=round"></property>
 		<property name="user" value="Mikelian"></property>
 		<property name="password" value="123456"></property>
-		<property name="tables" value="ml_switch,securitypro"></property>
+		<property name="tables" value="ml_switch,securitypro,ac,ap,h_router,h_switch,ml_router"></property>
 	</bean>
 	<bean id="TestRecordDAO" class="cn.greatwebtech.dao.impl.TestRecordDaoImpl">
 		<property name="authorityData" ref="AuthorityData"></property>
@@ -19,7 +19,7 @@
 		<property name="authorityData" ref="AuthorityData"></property>
 	</bean>
 	<bean id="DealQueryString" class="cn.greatwebtech.service.impl.DealQueryString">	
-		<property name="tables" value="ml_switch,securitypro"></property>
+		<property name="tables" value="ml_switch,securitypro,ac,ap,h_router,h_switch,ml_router"></property>
 	</bean>
 	<bean id="TestRecordService" class="cn.greatwebtech.service.impl.TestRecordServiceImpl">
 		<property name="testDB" ref="TestRecordDAO"></property>
