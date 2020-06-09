@@ -10,14 +10,23 @@
     @keyup.enter.native="submitForm('ruleForm')"
   >
     <div class="simple-search">
-      <el-form-item label="序列号" prop="SN" :rules="rules.SN">
-        <el-input v-model="formInline.SN" placeholder="请输入13位序列号" clearable />
-        <transition name="button">
-          <el-button v-if="!state.showAdvance" type="primary" @click="submitForm('ruleForm')">
-            查询
+      <el-col :span="8" :xs="24" :sm="12" :lg="8" :xl="6">
+        <el-form-item label="序列号" prop="SN" :rules="rules.SN">
+          <el-input v-model="formInline.SN" placeholder="请输入13位序列号" clearable />
+        </el-form-item>
+      </el-col>
+      <transition name="button">
+        <el-col v-if="!state.showAdvance" :span="8" :xs="24" :sm="12" :lg="8" :xl="6">
+          <el-form-item>
+            <el-button
+              class="fullfill"
+              type="primary"
+              @click="submitForm('ruleForm')">
+              查询
             </el-button>
-        </transition>
-      </el-form-item>
+          </el-form-item>
+        </el-col>
+      </transition>
       <el-form-item class="search-more">
         <el-button type="text" @click="toggleSearchForm">
           高级搜素
@@ -77,7 +86,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="12" :xs="24" :sm="18" :lg="12">
+        <el-col :span="16" :xs="24" :sm="24" :lg="16">
           <el-form-item label="测试时间">
             <el-date-picker
               v-model="formInline.dateRange"
@@ -91,9 +100,11 @@
             ></el-date-picker>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="8" :xs="24" :sm="24" :lg="8" :xl="6">
           <el-form-item>
-            <el-button type="primary" @click="submitForm('ruleForm')">查询</el-button>
+            <el-button class="fullfill" type="primary" @click="submitForm('ruleForm')">
+              查询
+            </el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -244,17 +255,11 @@ export default {
   margin-bottom: 15px;
 }
 .demo-form-inline .simple-search {
+  overflow: hidden;
   margin-top: 22px;
-  display: flex;
-}
-.demo-form-inline .simple-search .el-form-item {
-  white-space: nowrap;
-}
-.demo-form-inline .simple-search .el-button {
-  margin-left: 15px;
 }
 .demo-form-inline .simple-search .search-more {
-  margin-left: auto;
+  float: right;
   margin-right: 5px;
 }
 .demo-form-inline .simple-search .el-icon-arrow-right {
@@ -267,24 +272,40 @@ export default {
 .demo-form-inline .el-range-editor{
   width: 100%;
 }
-.demo-form-inline .button-enter-active,
-.demo-form-inline .button-leave-active {
+.button-enter-active,
+.button-leave-active {
   transition: all 1s;
+  max-height: 63px;
 }
 
-.demo-form-inline .button-enter,
-.demo-form-inline .button-leave-to {
+.button-enter,
+.button-leave-to {
   opacity: 0;
+  max-height: 0px;
 }
 
-.demo-form-inline .advance-box-enter-active,
-.demo-form-inline .advance-box-leave-active {
-  transition: all 0.5s;
+.advance-box-enter-active,
+.advance-box-leave-active {
+  transition: all 1s;
   max-height: 300px;
   overflow: hidden;
 }
-.demo-form-inline .advance-box-enter,
-.demo-form-inline .advance-box-leave-to {
+.advance-box-enter,
+.advance-box-leave-to {
   max-height: 0;
+}
+
+.advance-box-enter-active .el-button,
+.advance-box-leave-active .el-button {
+  transition: all 2s;
+}
+
+.advance-box-enter .el-button,
+.advance-box-leave-to .el-button {
+  opacity: 0;
+}
+
+.fullfill {
+  width: 100%;
 }
 </style>
