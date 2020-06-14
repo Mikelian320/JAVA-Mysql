@@ -16,6 +16,7 @@ import cn.greatwebtech.service.ISearchService;
 import cn.greatwebtech.service.impl.DealQueryString;
 import cn.greatwebtech.service.impl.PackageTestLogs;
 import cn.greatwebtech.service.impl.SelectCountServiceImpl;
+import cn.greatwebtech.service.impl.SumTestRecordImpl;
 import cn.greatwebtech.service.impl.TestLogServiceImpl;
 import cn.greatwebtech.service.impl.TestRecordServiceImpl;
 import net.sf.json.JSONArray;
@@ -31,7 +32,8 @@ public class QueryTestRecordServlet extends HttpServlet {
 	private TestLogServiceImpl TLService;
 	private SelectCountServiceImpl TCService;
 	private PackageTestLogs PackService;
-	private ISearchService ITService;
+	private SumTestRecordImpl  STService;
+	//private ISearchService ITService;
     
 	@Override
 	public void init() throws ServletException
@@ -41,6 +43,7 @@ public class QueryTestRecordServlet extends HttpServlet {
 		TLService=(TestLogServiceImpl)context.getBean("TestLogService");
 		TCService=(SelectCountServiceImpl)context.getBean("SelectCountService");
 		PackService=(PackageTestLogs)context.getBean("PackageTestLogs");
+		STService=(SumTestRecordImpl)context.getBean("SumTestRecordService");
 	}
 	
     /**
@@ -57,29 +60,31 @@ public class QueryTestRecordServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String queryStr="";
 		PrintWriter out=null;
-		JSONArray result=new JSONArray();
+		//JSONArray result=new JSONArray();
+		String result="";
 		try 
 		{
 			String searchMode=dealQS.getQueryParameter(request.getQueryString(), "searchMode");
 			switch (searchMode) {
 				case "ProductInfo":
-					ITService=TRService;
+					result=TRService.searchData(TRService.generateSQL(request)).toString();
 					break;
 				case "Log":
-					ITService=TLService;
+					result=TLService.searchData(TLService.generateSQL(request)).toString();
 				break;
 				case "TestCount":
-					ITService=TCService;
+					result=TCService.searchData(TCService.generateSQL(request)).toString();
 				break;
 				case "PackageTestLogs":
-					ITService=PackService;
+					PackService.writeLogsInLocal(PackService.searchData(PackService.generateSQL(request)));
+				break;
+				case "SumTestRecord":
+					result=STService.getTableSumTestRecord().toString();
 				break;
 				default:
 					throw new Exception("No "+searchMode+" Available");
 					//break;
 			}
-			queryStr=ITService.generateSQL(request);
-			result=ITService.searchData(queryStr);
 			if (!searchMode.equals("PackageTestLogs")) {
 				response.setCharacterEncoding("utf-8");
 				response.setContentType("text/javascript;charset=utf-8");
@@ -89,8 +94,6 @@ public class QueryTestRecordServlet extends HttpServlet {
 				response.setStatus(200);
 				out.close();
 			}else{
-				//response.setContentType("application/zip");
-				PackService.writeLogsInLocal(result);
 				response.reset(); 
 				response.setCharacterEncoding("UTF-8");
 			  	response.setContentType("application/x-msdownload");

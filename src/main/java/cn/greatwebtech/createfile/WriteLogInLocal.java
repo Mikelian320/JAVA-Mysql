@@ -28,6 +28,7 @@ public class WriteLogInLocal {
             zos = new ZipOutputStream(out);
             File sourceFile =new File(srcDir);
             compress(sourceFile,zos,sourceFile.getName(),KeepDirStructure);
+            zos.close();
         } catch (Exception e) {
             throw new RuntimeException("zip error",e);
             //TODO: handle exception

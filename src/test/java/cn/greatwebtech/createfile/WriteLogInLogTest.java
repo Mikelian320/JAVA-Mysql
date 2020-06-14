@@ -64,7 +64,7 @@ public class WriteLogInLogTest {
 	public void PackageTestLogs() 
 	{
 		System.out.println("===========在本地存打包测试日志===============");
-		request.setQueryString("searchMode=ProductInfo&Offset=0&Limit=50&SN=1234567890123&Product_Type=ml_switch");
+		request.setQueryString("searchMode=ProductInfo&Offset=0&Limit=50&Product_Type=ml_switch");
 		try {
             String SQL=PackService.generateSQL(request);
             JSONArray result=PackService.searchData(SQL);

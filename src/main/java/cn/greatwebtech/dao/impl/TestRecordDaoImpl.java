@@ -59,4 +59,7 @@ public class TestRecordDaoImpl implements ITestRecordDao {
 		this.authorityData = authorityData;
 	}
 
+	public String getTables(){
+		return authorityData.tables;
+	}
 }
