@@ -28,7 +28,8 @@ pipeline {
     stage('Publish') {
       steps {
         dir(path: 'src/web') {
-          sh 'scp -r dist autojenkins@www.greatwebtech.cn:~/JAVA-Mysql'
+          sh 'ssh autojenkins@www.greatwebtech.cn "mkdir -p JAVA-Mysql/${BRANCH_NAME}"'
+          sh 'scp -r dist autojenkins@www.greatwebtech.cn:~/JAVA-Mysql/${BRANCH_NAME}'
         }
 
       }
