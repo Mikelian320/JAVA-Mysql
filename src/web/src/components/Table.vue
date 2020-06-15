@@ -78,7 +78,7 @@
 
 <script>
 import axios from 'axios';
-import { SEARCH_ORIGIN, LOAD_DATA_ENTER_PAGE } from '@/constants/config';
+import { SEARCH_ORIGIN } from '@/constants/config';
 import downloadData from '@/utils/downloadData';
 import elTableInfiniteScroll from 'el-table-infinite-scroll';
 import moment from 'moment';
@@ -99,10 +99,6 @@ export default {
       setTimeout(() => {
         this.$router.push('/login');
       }, 500);
-      return;
-    }
-    if (LOAD_DATA_ENTER_PAGE) {
-      this.searchData(true);
     }
   },
   directives: {

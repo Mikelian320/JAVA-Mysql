@@ -48,12 +48,9 @@ npm run test:unit
 ```
 window.CONFIG = {
   SEARCH_ORIGIN: 'http://table.greatwebtech.cn/search/',
-  LOAD_DATA_ENTER_PAGE: true,
 };
 ```
 
 ## CONFIG
 
 SEARCH_ORIGIN 搜索的后端接口地址
-
-LOAD_DATA_ENTER_PAGE, true/false 进入页面后是否加载数据
